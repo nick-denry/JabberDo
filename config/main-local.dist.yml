@@ -1,0 +1,16 @@
+bot_account:
+  jid: bot_jid@example.com
+  password: bot_password
+  port: 5222
+  PROTOCOL_SSLv23: True
+
+db:
+  type: redis
+
+redis_db:
+  host: localhost
+  port: 6379
+  db: 0
+
+allowed_jids:
+  - jid@example.com
