@@ -5,6 +5,10 @@ Pros. Easy share your task lists with any device since jabber clients are everyw
 
 ## 1. Command list
 
+**Diplay Help:**
+
+Just type `?`
+
 **Control lists:**
 
 `..` - output existing lists  
