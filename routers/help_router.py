@@ -32,7 +32,8 @@ class HelpRouter(BaseRouter):
     def route(self, message):
         self.add_reply_message(_(".. - output existing lists "))
         self.add_reply_message(_(".<list_name> - add or display list, i.e. `.tasks`. Also makes list \"active\"."))
-        self.add_reply_message(_(". - display active list"))
+        self.add_reply_message(_(". or .* - display active list"))
+        self.add_reply_message(_(".*- - clear tasks of the active list"))
         self.add_reply_message(_(".! - display completed tasks of the active list"))
         self.add_reply_message(_(".!- - clear completed tasks of the active list"))
         self.add_reply_message(_(".-<list_name> - delete list and all of its tasks  "))
