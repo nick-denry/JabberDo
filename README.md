@@ -7,7 +7,7 @@ Pros. Easy share your task lists with any device since jabber clients are everyw
 - `.` - output existing lists
 - `.<name>` - add or display list. Also makes list "active".
 - `.` - display "active" list
-- `'.-list'` - delete whole list and it's tasks
+- `'.-list'` - delete whole list and it's tasks (not implemented)
 
 - Any message - adds task to active list
 - `-<number>` - delete task `<number>` from list, i.e. -1 deletes first task. 
