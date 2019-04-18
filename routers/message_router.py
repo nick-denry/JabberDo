@@ -16,6 +16,7 @@ from routers.task_router import TaskRouter
 # @see https://stackoverflow.com/questions/14946017/switch-translations-in-python-and-gettext
 _ = gettext.gettext
 
+
 class MessageRouter(BaseRouter):
 
     def __init__(self, xmpp_message: Message):
