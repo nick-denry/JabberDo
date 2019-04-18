@@ -36,7 +36,10 @@ class RedisTaskRepository(BaseRedisRepository):
 
     def get_task_from_list_number(self, the_list: ListModel, task_number_in_list: int) -> TaskModel:
         task_id = self.redis_connection.lindex("list:%s:tasks" % the_list.id_, task_number_in_list)
-        return self.get_task(task_id)
+        if task_id:
+            return self.get_task(task_id)
+        else:
+            return False
 
     def remove_task(self, task: TaskModel):
         transaction = self.redis_connection.pipeline()
