@@ -7,16 +7,16 @@ Pros. Easy share your task lists with any device since jabber clients are everyw
 
 **Control lists:**
 
-`.` - output existing lists  
+`..` - output existing lists  
 `.<list_name>` - add or display list, i.e. `.tasks`. Also makes list "active".  
 `.` - display active list  
-`.!` - display completed tasks for active list  
+`.!` - display completed tasks of the active list  
 `.!-` - clear completed tasks of the active list
-`.-<list_name>` - delete whole list and all of its tasks     
+`.-<list_name>` - delete list and all of its tasks     
 
 **Control tasks:**
     
-Any message - adds task to active list  
+Any message - adds task to the active list  
 `!<number` - move task to completed    
 `-<number>` - delete task `<number>` from list, i.e. -1 deletes first task.  
  
