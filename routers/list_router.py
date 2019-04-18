@@ -57,8 +57,11 @@ class ListRouter(BaseRouter):
                 message = self.extract_command_message(command, message)
                 if message:
                     # Delete list and remove from current jid active lists
-                    self.__list_repository.remove_list(message)
-                    self.add_reply_message(_("Delete list %s") % message)
+                    result = self.__list_repository.remove_list(message)
+                    if result:
+                        self.add_reply_message(_("Delete list %s") % message)
+                    else:
+                        self.add_reply_message(_("List %s not found") % message)
                 else:
                     self.add_reply_message(_("Need a list name to delete"))
             elif command == "!":

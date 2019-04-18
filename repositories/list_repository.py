@@ -99,16 +99,19 @@ class RedisListRepository(BaseRedisRepository):
     def remove_list(self, list_name):
         # Remove lists tasks
         the_list = self.get_list_by_name(list_name)
-        self.remove_list_tasks(the_list)
-        self.remove_list_completed_tasks(the_list)
-        list_active_for = self.redis_connection.smembers("list:%s:active_for" % the_list.id_)
-        # Remove list from active user lists
-        transaction = self.redis_connection.pipeline()
-        for user_jid in list_active_for:
-            transaction.delete("%s:active:list" % user_jid)
-        transaction.delete("list:%s:active_for" % the_list.id_)
-        # Remove list from indexes and itself
-        transaction.lrem("lists", 0, the_list.id_)
-        transaction.zrem("lists:names", the_list.name)
-        transaction.delete("list:%s" % the_list.id_)
-        return transaction.execute()
+        if the_list:
+            self.remove_list_tasks(the_list)
+            self.remove_list_completed_tasks(the_list)
+            list_active_for = self.redis_connection.smembers("list:%s:active_for" % the_list.id_)
+            # Remove list from active user lists
+            transaction = self.redis_connection.pipeline()
+            for user_jid in list_active_for:
+                transaction.delete("%s:active:list" % user_jid)
+            transaction.delete("list:%s:active_for" % the_list.id_)
+            # Remove list from indexes and itself
+            transaction.lrem("lists", 0, the_list.id_)
+            transaction.zrem("lists:names", the_list.name)
+            transaction.delete("list:%s" % the_list.id_)
+            return transaction.execute()
+        else:
+            return False
