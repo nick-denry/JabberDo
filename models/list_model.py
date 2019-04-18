@@ -14,5 +14,5 @@ class ListModel:
     def add_task(self, task):
         self.tasks.append(task)
 
-    def delete_task(self, task):
+    def remove_task(self, task):
         self.tasks.remove(task)

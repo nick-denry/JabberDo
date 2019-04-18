@@ -40,11 +40,12 @@ class RedisListRepository(BaseRedisRepository):
         return self.get_list(list_id)
 
     def get_list(self, list_id):
-        # TODO: Populate tasks for list
         list_dict = self.redis_connection.hgetall("list:%s" % list_id)
         if list_dict:
             the_list = self.unserialize(list_dict, ListModel)
-            the_list.tasks = self.__get_list_tasks(the_list.id_)
+            list_tasks = self.__get_list_tasks(the_list.id_)
+            for task in list_tasks:
+                the_list.add_task(task)
             return the_list
         else:
             return None
@@ -70,12 +71,34 @@ class RedisListRepository(BaseRedisRepository):
     def set_active(self, list_name, current_jid):
         if self.is_list_exists(list_name):
             list_id = self.__get_id_by_name(list_name)
-            return self.redis_connection.set("%s:active:list" % current_jid, list_id)
+            transaction = self.redis_connection.pipeline()
+            transaction.sadd("list:%s:active_for" % list_id, current_jid)
+            transaction.set("%s:active:list" % current_jid, list_id)
+            return transaction.execute()
         return False
 
     def get_active(self, current_jid):
         list_id = self.redis_connection.get("%s:active:list" % current_jid)
         return self.get_list(list_id)
 
-    def delete_list(self, list_name, current_jid):
-        pass
+    def remove_list_tasks(self, the_list):
+        for task in the_list.tasks[:]:  # [:] Iterate over list copy to delete from source list
+            self.__tasks_repository.remove_task(task)
+            the_list.remove_task(task)
+        return self.redis_connection.delete("list:%s:tasks" % the_list.id_)
+
+    def remove_list(self, list_name):
+        # Remove lists tasks
+        the_list = self.get_list_by_name(list_name)
+        self.remove_list_tasks(the_list)
+        list_active_for = self.redis_connection.smembers("list:%s:active_for" % the_list.id_)
+        # Remove list from active user lists
+        transaction = self.redis_connection.pipeline()
+        for user_jid in list_active_for:
+            transaction.delete("%s:active:list" % user_jid)
+        transaction.delete("list:%s:active_for" % the_list.id_)
+        # Remove list from indexes and itself
+        transaction.lrem("lists", 0, the_list.id_)
+        transaction.zrem("lists:names", the_list.name)
+        transaction.delete("list:%s" % the_list.id_)
+        return transaction.execute()
