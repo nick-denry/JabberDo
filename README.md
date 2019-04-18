@@ -21,7 +21,8 @@ Just type `?`
 
 **Control tasks:**
     
-Any message - adds task to the active list  
+Any message - adds task to the active list    
+`:<message>` - add multiple tasks from multiline message  
 `!<number` - move task to completed    
 `-<number>` - delete task `<number>` from list, i.e. -1 deletes first task.  
  

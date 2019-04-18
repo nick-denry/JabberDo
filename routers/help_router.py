@@ -39,6 +39,7 @@ class HelpRouter(BaseRouter):
         self.add_reply_message(_(".-<list_name> - delete list and all of its tasks  "))
         self.add_reply_message(" ")
         self.add_reply_message(_("Any message - adds task to active list"))
+        self.add_reply_message(_(":<message> - add multiple tasks from multiline message"))
         self.add_reply_message(_("!<number - move task to completed"))
         self.add_reply_message(_("-<number> - delete task <number> from list, i.e. -1 deletes first task."))
         print(self.reply_message)

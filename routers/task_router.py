@@ -77,6 +77,17 @@ class TaskRouter(BaseRouter):
         else:
             self.add_reply_message(_("Please send task number (i.e. #-33). See current list tasks with ."))
 
+    def __add_tasks_multiline(self, message):
+        the_list = self.__list_repository.get_active(self.current_jid)
+        if the_list:
+            for line in message.splitlines():
+                self.__task_repository.add_task(line, the_list)
+            self.add_reply_message(_("(ʘ‿ʘ)╯ alot of tasks added"))
+        else:
+            self.add_reply_message(
+                _("No active list found. See lists with .. or choose one by name .<list_name>"))
+
+
     def route(self, message):
         command = self.extract_command(message)
         if command == "!":
@@ -85,6 +96,12 @@ class TaskRouter(BaseRouter):
         elif command == "-":
             message = self.extract_command_message(command, message)
             self.__remove_task_action(task_sequential_number=message)
+        elif command == ":":
+            message = self.extract_command_message(command, message)
+            if message:
+                self.__add_tasks_multiline(message)
+            else:
+                self.add_reply_message(_("Say something (◔_◔)"))
         else:
             # Get active list and add task to it
             the_list = self.__list_repository.get_active(self.current_jid)
