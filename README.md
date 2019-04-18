@@ -14,7 +14,7 @@ Just type `?`
 `..` - output existing lists  
 `.<list_name>` - add or display list, i.e. `.tasks`. Also makes list "active".  
 `.` or `.*` - display active list  
-`.*-` - clear tasks of the active list
+`.*-` - clear tasks of the active list  
 `.!` - display completed tasks of the active list  
 `.!-` - clear completed tasks of the active list  
 `.-<list_name>` - delete list and all of its tasks     
