@@ -42,6 +42,15 @@ class ListRouter(BaseRouter):
         else:
             self.add_reply_message(no_tasks_message)
 
+    def __display_active_list_action(self):
+        the_list = self.__list_repository.get_active(self.current_jid)
+        if the_list:
+            self.add_reply_message(_("Active list is %s") % the_list.name)
+            no_tasks_messsage = _("List is empty. Add task to it by send some message.")
+            self.__display_list_tasks_action(the_list, no_tasks_messsage)
+        else:
+            self.add_reply_message(_("No active list found. See lists with .. or choose one by name .<list_name>"))
+
     def route(self, message: str):
         if message:
             command = self.extract_command(message)
@@ -53,6 +62,19 @@ class ListRouter(BaseRouter):
                         self.add_reply_message(list_name)
                 else:
                     self.add_reply_message(_("No lists. Add one by typing .<list_name>"))
+            elif command == '*':
+                message = self.extract_command_message(command, message)
+                command = self.extract_command(message)
+                if command == "-":
+                    the_list = self.__list_repository.get_active(self.current_jid)
+                    if the_list:
+                        self.add_reply_message(_("Clear tasks of the %s list") % the_list.name)
+                        self.__list_repository.remove_list_tasks(the_list)
+                    else:
+                        self.add_reply_message(
+                            _("No active list found. See lists with .. or choose one by name .<list_name>"))
+                else:
+                    self.__display_active_list_action()
             elif command == "-":
                 message = self.extract_command_message(command, message)
                 if message:
@@ -84,21 +106,14 @@ class ListRouter(BaseRouter):
                 if not is_list_exists:
                     self.__list_repository.add_list(message)
                     self.add_reply_message(_("Added list %s") % message)
-                # Else set active for current user & display
-                else:
-                    the_list = self.__list_repository.get_list_by_name(message)
-                    self.add_reply_message(_("Display list %s") % the_list.name)
-                    no_tasks_messsage = _("List is empty. Add task to it by send some message.")
-                    self.__display_list_tasks_action(the_list, no_tasks_messsage)
+                # Set active for current user & display
                 self.__list_repository.set_active(message, self.current_jid)
+                self.__display_active_list_action()
+
         else:
-            # Get active list
-            the_list = self.__list_repository.get_active(self.current_jid)
-            if the_list:
-                self.add_reply_message(_("Active list is %s") % the_list.name)
-                no_tasks_messsage = _("List is empty. Add task to it by send some message.")
-                self.__display_list_tasks_action(the_list, no_tasks_messsage)
-            else:
-                self.add_reply_message(_("No active list found. See lists with .. or choose one by name .<list_name>"))
+            # Display active list
+            self.__display_active_list_action()
+
+
         print(self.reply_message)
         return self.xmpp_message.reply(self.reply_message).send()
