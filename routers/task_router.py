@@ -36,31 +36,55 @@ class TaskRouter(BaseRouter):
     def reply_message(self):
         return super().reply_message
 
+    def __set_task_complete_action(self, task_sequential_number):
+        if task_sequential_number.isdigit():
+            the_list = self.__list_repository.get_active(self.current_jid)
+            if the_list:
+                task_number = int(task_sequential_number) - 1
+                task = self.__task_repository.get_task_from_list_number(the_list, task_number_in_list=task_number)
+                if task:
+                    # self.__task_repository.remove_task(task)
+                    self.__task_repository.set_task_complete(task)
+                    self.add_reply_message(_("Set task #%s complete") % task_sequential_number)
+                else:
+                    self.add_reply_message(
+                        _("No task #%s found in the %s list") % (task_sequential_number, the_list.name))
+            else:
+                self.add_reply_message(
+                    _("No active list found. See lists with .. or choose one by name .<list_name>"))
+        else:
+            self.add_reply_message(_("Please send task number (i.e. #!33). See current list tasks with ."))
+
+    def __remove_task_action(self, task_sequential_number):
+        """
+        Removes task number (sequential)
+        :param sequential: str Sequential number of task in active list
+        :return:
+        """
+        if task_sequential_number.isdigit():
+            the_list = self.__list_repository.get_active(self.current_jid)
+            if the_list:
+                task_number = int(task_sequential_number) - 1
+                task = self.__task_repository.get_task_from_list_number(the_list, task_number_in_list=task_number)
+                if task:
+                    self.__task_repository.remove_task(task)
+                    self.add_reply_message(_("Remove task #%s") % task_sequential_number)
+                else:
+                    self.add_reply_message(_("No task #%s found in the %s list") % (task_sequential_number, the_list.name))
+            else:
+                self.add_reply_message(
+                    _("No active list found. See lists with .. or choose one by name .<list_name>"))
+        else:
+            self.add_reply_message(_("Please send task number (i.e. #-33). See current list tasks with ."))
+
     def route(self, message):
         command = self.extract_command(message)
         if command == "!":
             message = self.extract_command_message(command, message)
-            if message.isdigit():
-                self.add_reply_message(_("Set task #%s complete") % message)
-            else:
-                self.add_reply_message(_("Please send task number (i.e. #!33). See current list tasks with ."))
+            self.__set_task_complete_action(task_sequential_number=message)
         elif command == "-":
             message = self.extract_command_message(command, message)
-            if message.isdigit():
-                the_list = self.__list_repository.get_active(self.current_jid)
-                if the_list:
-                    task_number = int(message) - 1
-                    task = self.__task_repository.get_task_from_list_number(the_list, task_number_in_list=task_number)
-                    if task:
-                        self.__task_repository.remove_task(task)
-                        self.add_reply_message(_("Remove task #%s") % message)
-                    else:
-                        self.add_reply_message(_("No task #%s found in the %s list") % (message, the_list.name))
-                else:
-                    self.add_reply_message(
-                        _("No active list found. See lists with .. or choose one by name .<list_name>"))
-            else:
-                self.add_reply_message(_("Please send task number (i.e. #!33). See current list tasks with ."))
+            self.__remove_task_action(task_sequential_number=message)
         else:
             # Get active list and add task to it
             the_list = self.__list_repository.get_active(self.current_jid)

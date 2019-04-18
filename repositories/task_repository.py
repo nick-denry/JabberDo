@@ -41,8 +41,14 @@ class RedisTaskRepository(BaseRedisRepository):
         else:
             return False
 
-    def remove_task(self, task: TaskModel):
+    def remove_task(self, task: TaskModel, task_type="tasks"):
         transaction = self.redis_connection.pipeline()
-        transaction.lrem("list:%s:tasks" % task.list_id, 0, task.id_)
+        transaction.lrem("list:%s:%s" % (task.list_id, task_type), 0, task.id_)
         transaction.delete("task:%s" % task.id_)
         return transaction.execute()
+
+    def set_task_complete(self, task: TaskModel):
+        transaction = self.redis_connection.pipeline()
+        transaction.rpush("list:%s:tasks:completed" % task.list_id, task.id_)
+        transaction.lrem("list:%s:tasks" % task.list_id, 0, task.id_)
+        transaction.execute()

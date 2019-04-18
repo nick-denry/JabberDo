@@ -23,8 +23,8 @@ class RedisListRepository(BaseRedisRepository):
     def __create_id(self):
         return super().create_id("lists:index")
 
-    def __get_list_tasks(self, list_id):
-        list_tasks_ids = self.redis_connection.lrange("list:%s:tasks" % list_id, 0, -1)
+    def __get_list_tasks(self, list_id, tasks_type="tasks"):
+        list_tasks_ids = self.redis_connection.lrange("list:%s:%s" % (list_id, tasks_type), 0, -1)
         tasks = []
         for task_id in list_tasks_ids:
             task = self.__tasks_repository.get_task(task_id)
@@ -46,6 +46,9 @@ class RedisListRepository(BaseRedisRepository):
             list_tasks = self.__get_list_tasks(the_list.id_)
             for task in list_tasks:
                 the_list.add_task(task)
+            list_completed_tasks = self.__get_list_tasks(the_list.id_, "tasks:completed")
+            for task in list_completed_tasks:
+                the_list.add_completed_task(task)
             return the_list
         else:
             return None
@@ -56,12 +59,12 @@ class RedisListRepository(BaseRedisRepository):
     def add_list(self, list_name):
         """
         Creates list if not exist
-        :param the_list:
-        :return:
+        :param list_name: str Name of the list to add
+        :return: bool
         """
         list_id = self.__create_id()
         the_list = ListModel(list_id, list_name)
-        list_dict = self.serialize(the_list, ["tasks"])
+        list_dict = self.serialize(the_list, ["tasks", "completed_tasks"])
         self.redis_connection.zadd("lists:names", {the_list.name: the_list.id_})
         self.redis_connection.lpush("lists", the_list.id_)
         self.redis_connection.incr("lists:index")
@@ -81,16 +84,23 @@ class RedisListRepository(BaseRedisRepository):
         list_id = self.redis_connection.get("%s:active:list" % current_jid)
         return self.get_list(list_id)
 
+    def remove_list_completed_tasks(self, the_list):
+        for task in the_list.completed_tasks[:]:  # [:] Iterate over list copy to delete from source list
+            self.__tasks_repository.remove_task(task, "tasks:completed")
+            the_list.remove_completed_task(task)
+        self.redis_connection.delete("list:%s:tasks:completed" % the_list.id_)
+
     def remove_list_tasks(self, the_list):
         for task in the_list.tasks[:]:  # [:] Iterate over list copy to delete from source list
             self.__tasks_repository.remove_task(task)
             the_list.remove_task(task)
-        return self.redis_connection.delete("list:%s:tasks" % the_list.id_)
+        self.redis_connection.delete("list:%s:tasks" % the_list.id_)
 
     def remove_list(self, list_name):
         # Remove lists tasks
         the_list = self.get_list_by_name(list_name)
         self.remove_list_tasks(the_list)
+        self.remove_list_completed_tasks(the_list)
         list_active_for = self.redis_connection.smembers("list:%s:active_for" % the_list.id_)
         # Remove list from active user lists
         transaction = self.redis_connection.pipeline()
