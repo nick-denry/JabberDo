@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import json
+
 from models.list_model import ListModel
 from models.task_model import TaskModel
 from repositories.base_repository import BaseRedisRepository
@@ -51,4 +53,36 @@ class RedisTaskRepository(BaseRedisRepository):
         transaction = self.redis_connection.pipeline()
         transaction.rpush("list:%s:tasks:completed" % task.list_id, task.id_)
         transaction.lrem("list:%s:tasks" % task.list_id, 0, task.id_)
+        return transaction.execute()
+
+    def schedule_task(self, task: TaskModel, for_jid, timestamp):
+        schedule_record = json.dumps({timestamp: for_jid})
+        transaction = self.redis_connection.pipeline()
+        transaction.sadd("scheduled", task.id_)
+        transaction.rpush("scheduled:%s" % task.id_, schedule_record)
+        return transaction.execute()
+
+    def unschedule_task_at_all(self, task):
+        transaction = self.redis_connection.pipeline()
+        transaction.delete("scheduled:%s" % task.id_)
+        transaction.srem("scheduled", task.id_)
         transaction.execute()
+
+    def unschedule_task(self, task: TaskModel, for_jid, timestamp):
+        schedule_record = json.dumps({timestamp: for_jid})
+        result = self.redis_connection.lrem("scheduled:%s" % task.id_, 0, schedule_record)
+        # Check timestamp list
+        timestamp_list_length = self.redis_connection.llen("scheduled:%s" % task.id_)
+        if timestamp_list_length == 0:
+            transaction = self.redis_connection.pipeline()
+            transaction.delete("scheduled:%s" % task.id_)
+            transaction.srem("scheduled", task.id_)
+            transaction.execute()
+        return result
+
+
+
+
+
+
+

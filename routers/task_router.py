@@ -3,6 +3,7 @@
 
 import gettext
 
+from dateutil.parser import parse
 from sleekxmpp.stanza.message import Message
 
 from components.config import Config
@@ -53,7 +54,7 @@ class TaskRouter(BaseRouter):
                 self.add_reply_message(
                     _("No active list found. See lists with .. or choose one by name .<list_name>"))
         else:
-            self.add_reply_message(_("Please send task number (i.e. #!33). See current list tasks with ."))
+            self.add_reply_message(_("Please send task number (i.e. #!33) to set complete. See current list tasks with ."))
 
     def __remove_task_action(self, task_sequential_number):
         """
@@ -75,9 +76,9 @@ class TaskRouter(BaseRouter):
                 self.add_reply_message(
                     _("No active list found. See lists with .. or choose one by name .<list_name>"))
         else:
-            self.add_reply_message(_("Please send task number (i.e. #-33). See current list tasks with ."))
+            self.add_reply_message(_("Please send task number (i.e. #-33) to delete. See current list tasks with ."))
 
-    def __add_tasks_multiline(self, message):
+    def __add_tasks_multiline_action(self, message):
         the_list = self.__list_repository.get_active(self.current_jid)
         if the_list:
             for line in message.splitlines():
@@ -87,6 +88,42 @@ class TaskRouter(BaseRouter):
             self.add_reply_message(
                 _("No active list found. See lists with .. or choose one by name .<list_name>"))
 
+    def __schedule_task_action(self, message):
+        try:
+            task_sequential_number, date_andor_time = message.split(" ", 1)
+            if task_sequential_number.isdigit():
+                task_number = int(task_sequential_number)-1
+                if date_andor_time:
+                    datetime = parse(date_andor_time)
+                    if datetime:
+                        timestamp = int(datetime.timestamp())
+                        the_list = self.__list_repository.get_active(self.current_jid)
+                        task = self.__task_repository.get_task_from_list_number(the_list, task_number)
+                        if task:
+                            self.__task_repository.schedule_task(task, self.current_jid, timestamp)
+                            self.add_reply_message(_("⏰ Task #%s scheduled to %s") % (task_number, datetime))
+                        else:
+                            self.add_reply_message(
+                                _("No task #%s found in the %s list") % (task_number, the_list.name))
+                    else:
+                        self.add_reply_message(_("Error convert date ಠ_ಠ"))
+                else:
+                    self.add_reply_message(_("No date time provided ٩(͡๏̯͡๏)۶"))
+            else:
+                self.add_reply_message(
+                    _("Please send task number (i.e. #*33) to schedule. See current list tasks with ."))
+        except ValueError:
+            self.add_reply_message(_("No date time provided ٩(͡๏̯͡๏)۶"))
+
+    def __unschedule_task_action(self, message):
+        if message:
+            if message.isdigit():
+                task = self.__task_repository.get_task(message)
+                self.__task_repository.unschedule_task_at_all(task)
+            else:
+                self.add_reply_message(_("⏰ can unschedule only task number ಠ_ಠ"))
+        else:
+            self.add_reply_message(_("٩(͡๏̯͡๏)۶ Please provide task number to unschedule ⏰"))
 
     def route(self, message):
         command = self.extract_command(message)
@@ -99,9 +136,20 @@ class TaskRouter(BaseRouter):
         elif command == ":":
             message = self.extract_command_message(command, message)
             if message:
-                self.__add_tasks_multiline(message)
+                self.__add_tasks_multiline_action(message)
             else:
                 self.add_reply_message(_("Say something (◔_◔)"))
+        elif command == "*":
+            message = self.extract_command_message(command, message)
+            command = self.extract_command(message)
+            if command == "-":
+                message = self.extract_command_message(command, message)
+                self.__unschedule_task_action(message)
+            else:
+                if message:
+                    self.__schedule_task_action(message)
+                else:
+                    self.add_reply_message(_("Say something (◔_◔) to ⏰ the task"))
         else:
             # Get active list and add task to it
             the_list = self.__list_repository.get_active(self.current_jid)

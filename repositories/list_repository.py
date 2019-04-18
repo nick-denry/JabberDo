@@ -115,3 +115,16 @@ class RedisListRepository(BaseRedisRepository):
             return transaction.execute()
         else:
             return False
+
+    def get_scheduled_tasks_info(self):
+        scheduled_ids = self.get_scheduled_tasks_ids()
+        scheduled_tasks_info = []
+        for task_id in scheduled_ids:
+            task_info = self.redis_connection.lrange("scheduled:%s" % task_id, 0, -1)
+            scheduled_tasks_info.append({task_id: task_info})
+        return scheduled_tasks_info
+
+    def get_scheduled_tasks_ids(self):
+        return self.redis_connection.smembers("scheduled")
+
+

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import datetime
 import gettext
+import json
 
 from sleekxmpp.stanza.message import Message
 
@@ -19,6 +21,8 @@ class ListRouter(BaseRouter):
         BaseRouter.__init__(self, xmpp_message)
         if Config.db_type == Config.DB_TYPE_REDIS:
             from repositories.list_repository import RedisListRepository
+            from repositories.task_repository import RedisTaskRepository
+            self.__task_repository = RedisTaskRepository()
             self.__list_repository = RedisListRepository()
 
     @property
@@ -51,6 +55,21 @@ class ListRouter(BaseRouter):
         else:
             self.add_reply_message(_("No active list found. See lists with .. or choose one by name .<list_name>"))
 
+    def __display_schedule_list_action(self):
+        scheduled_tasks_info = self.__list_repository.get_scheduled_tasks_info()
+        if scheduled_tasks_info:
+            for task_info in scheduled_tasks_info:
+                for task_id, task_params_str in task_info.items():
+                    task = self.__task_repository.get_task(task_id)
+                    for task_str in task_params_str:
+                        task_params = json.loads(task_str)
+                        for task_timestamp, for_jid in task_params.items():
+                            task_timestamp = int(task_timestamp)
+                            task_datetime = datetime.datetime.utcfromtimestamp(task_timestamp).strftime('%d.%m.%Y %H:%M:%S')
+                            self.add_reply_message("%s: %s. %s" % (task_datetime, task.id_, task.title))
+        else:
+            self.add_reply_message(_("No ⏰ tasks"))
+
     def route(self, message: str):
         if message:
             command = self.extract_command(message)
@@ -63,6 +82,8 @@ class ListRouter(BaseRouter):
                 else:
                     self.add_reply_message(_("No lists. Add one by typing .<list_name>"))
             elif command == '*':
+                self.__display_schedule_list_action()
+            elif command == "-":
                 message = self.extract_command_message(command, message)
                 command = self.extract_command(message)
                 if command == "-":
@@ -74,18 +95,15 @@ class ListRouter(BaseRouter):
                         self.add_reply_message(
                             _("No active list found. See lists with .. or choose one by name .<list_name>"))
                 else:
-                    self.__display_active_list_action()
-            elif command == "-":
-                message = self.extract_command_message(command, message)
-                if message:
-                    # Delete list and remove from current jid active lists
-                    result = self.__list_repository.remove_list(message)
-                    if result:
-                        self.add_reply_message(_("Delete list %s") % message)
+                    if message:
+                        # Delete list and remove from current jid active lists
+                        result = self.__list_repository.remove_list(message)
+                        if result:
+                            self.add_reply_message(_("Delete list %s") % message)
+                        else:
+                            self.add_reply_message(_("List %s not found") % message)
                     else:
-                        self.add_reply_message(_("List %s not found") % message)
-                else:
-                    self.add_reply_message(_("Need a list name to delete"))
+                        self.add_reply_message(_("Need a list name to delete"))
             elif command == "!":
                 message = self.extract_command_message(command, message)
                 command = self.extract_command(message)
@@ -109,11 +127,9 @@ class ListRouter(BaseRouter):
                 # Set active for current user & display
                 self.__list_repository.set_active(message, self.current_jid)
                 self.__display_active_list_action()
-
         else:
             # Display active list
             self.__display_active_list_action()
-
 
         print(self.reply_message)
         return self.xmpp_message.reply(self.reply_message).send()
