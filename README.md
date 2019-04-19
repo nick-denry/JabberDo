@@ -2,6 +2,7 @@
 
 Pros. Easy share your task lists with any device since jabber clients are everywhere.
 
+**Disclaimer:** This is pre-alpha software. Everything could be changed. Follow README to watch the changes. 
 
 ## 1. Command list
 
