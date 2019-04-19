@@ -54,7 +54,8 @@ class TaskRouter(BaseRouter):
                 self.add_reply_message(
                     _("No active list found. See lists with .. or choose one by name .<list_name>"))
         else:
-            self.add_reply_message(_("Please send task number (i.e. #!33) to set complete. See current list tasks with ."))
+            self.add_reply_message(
+                _("Please send task number (i.e. #!33) to set complete. See current list tasks with ."))
 
     def __remove_task_action(self, task_sequential_number):
         """
@@ -138,7 +139,7 @@ class TaskRouter(BaseRouter):
             if message:
                 self.__add_tasks_multiline_action(message)
             else:
-                self.add_reply_message(_("Say something (◔_◔)"))
+                self.add_reply_message(_("Text something (◔_◔)"))
         elif command == "*":
             message = self.extract_command_message(command, message)
             command = self.extract_command(message)
@@ -149,7 +150,7 @@ class TaskRouter(BaseRouter):
                 if message:
                     self.__schedule_task_action(message)
                 else:
-                    self.add_reply_message(_("Say something (◔_◔) to ⏰ the task"))
+                    self.add_reply_message(_("Text something (◔_◔) to ⏰ the task"))
         else:
             # Get active list and add task to it
             the_list = self.__list_repository.get_active(self.current_jid)
