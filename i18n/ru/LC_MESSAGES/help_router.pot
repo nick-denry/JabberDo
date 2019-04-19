@@ -1,0 +1,69 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2019-04-19 21:11+MSK\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: help_router.py:33
+msgid ".. - output existing lists "
+msgstr ""
+
+#: help_router.py:34
+msgid ".<list_name> - add or display list, i.e. `.tasks`. Also makes list \"active\"."
+msgstr ""
+
+#: help_router.py:35
+msgid ". - display active list"
+msgstr ""
+
+#: help_router.py:36
+msgid ".-- - clear tasks of the active list"
+msgstr ""
+
+#: help_router.py:37
+msgid ".! - display completed tasks of the active list"
+msgstr ""
+
+#: help_router.py:38
+msgid ".!- - clear completed tasks of the active list"
+msgstr ""
+
+#: help_router.py:39
+msgid ".-<list_name> - delete list and all of its tasks  "
+msgstr ""
+
+#: help_router.py:41
+msgid "Any message - adds task to active list"
+msgstr ""
+
+#: help_router.py:42
+msgid ":<message> - add multiple tasks from multiline message"
+msgstr ""
+
+#: help_router.py:43
+msgid "!<number - move task to completed"
+msgstr ""
+
+#: help_router.py:44
+msgid "-<number> - delete task <number> from list, i.e. -1 deletes first task."
+msgstr ""
+
+#: help_router.py:46
+msgid "*<number> time date - set reminder for task <number> to time/date"
+msgstr ""
+
+#: help_router.py:47
+msgid ".* - list scheduled tasks"
+msgstr ""
+
