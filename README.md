@@ -24,7 +24,7 @@ Just text `?`
     
 Any message - adds task to the active list    
 `:<message>` - add multiple tasks from multiline message  
-`!<number` - move task to completed    
+`!<number>` - move task `<number>`
 `-<number>` - delete task `<number>` from list, i.e. -1 deletes first task.
 
 **Schedule tasks:**
