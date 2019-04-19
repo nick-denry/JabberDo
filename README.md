@@ -7,14 +7,14 @@ Pros. Easy share your task lists with any device since jabber clients are everyw
 
 **Diplay Help:**
 
-Just type `?`
+Just text `?`
 
 **Control lists:**
 
 `..` - output existing lists  
 `.<list_name>` - add or display list, i.e. `.tasks`. Also makes list "active".  
-`.` or `.*` - display active list  
-`.*-` - clear tasks of the active list  
+`.` - display active list  
+`.--` - clear tasks of the active list  
 `.!` - display completed tasks of the active list  
 `.!-` - clear completed tasks of the active list  
 `.-<list_name>` - delete list and all of its tasks     
@@ -24,7 +24,16 @@ Just type `?`
 Any message - adds task to the active list    
 `:<message>` - add multiple tasks from multiline message  
 `!<number` - move task to completed    
-`-<number>` - delete task `<number>` from list, i.e. -1 deletes first task.  
+`-<number>` - delete task `<number>` from list, i.e. -1 deletes first task.
+
+**Schedule tasks:**
+
+`*<number> time` or `*<number> date time` - set reminder for task `<number>` from active list to provided time or date/time
+    
+    example: *1 22:04 - set reminder for task 1 from active list to 22:04 today.
+
+`.*` - list scheduled tasks
+       
  
 
 ## 2. Requremens
@@ -33,10 +42,29 @@ Any message - adds task to the active list
 - [SleekXMPP](https://github.com/fritzy/SleekXMPP)
 - python-redis
 - python-yaml
+- python-dateutil
 
 ## 3. Installation
 
-1. [Download bot files](https://github.com/nick-denry/PyXmmpDo/archive/master.zip) or clone form github:
+1. Create `virtualenv` in your preferred way.
+
+#### Debian/Ubuntu example.
+
+    sudo apt-get install redis-server  # Install redis server
+    sudo apt-get install python3-pip  # Install python3-pip
+    sudo pip3 install virtualenv  # Install virtualenv 
+    virtualenv -p python3 myenv  # Create virtualenv
+    source myenv  # Activate created env
+    # Add packages
+    pip3 install sleekxmpp
+    pip3 install redis
+    pip3 install pyyaml
+    pip3 install python-dateutil
+    deactivate  # Deactivate env
+    
+ 
+
+2. [Download bot files](https://github.com/nick-denry/PyXmmpDo/archive/master.zip) or clone form github:
 ```bash
 git clone https://github.com/nick-denry/PyXmmpDo.git 
 ```
@@ -72,8 +100,8 @@ allowed_jids:
 
 ## 4. Run
 
-Run in background with `nohup`
+Run in background with `screen` and created environment
 
 ```bash
-nohup python bot.py >/dev/null 2>&1 
+screen myenv/bin/python3 bot.py 
 ```
