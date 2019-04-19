@@ -41,7 +41,7 @@ class ScheduleRouter:
                             task_datetime = self.__task_repository.task_local_datetime(task_timestamp)
                             m = Message()
                             m["to"] = for_jid
-                            m["body"] = _("Reminder for task %s from list %s, scheduled at %s") % (task.title, task_list.name, task_datetime)
+                            m["body"] = _("Reminder for task %s from list %s, scheduled to %s") % (task.title, task_list.name, task_datetime)
                             m['type'] = "chat"
                             self.xmpp_client.send(m)
                             self.__task_repository.unschedule_task(task, for_jid, task_timestamp)
