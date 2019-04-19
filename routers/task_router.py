@@ -102,7 +102,7 @@ class TaskRouter(BaseRouter):
                         task = self.__task_repository.get_task_from_list_number(the_list, task_number)
                         if task:
                             self.__task_repository.schedule_task(task, self.current_jid, timestamp)
-                            self.add_reply_message(_("⏰ Task #%s scheduled to %s") % (task_number, datetime))
+                            self.add_reply_message(_("⏰ Task #%s scheduled to %s") % (task_sequential_number, datetime))
                         else:
                             self.add_reply_message(
                                 _("No task #%s found in the %s list") % (task_number, the_list.name))
