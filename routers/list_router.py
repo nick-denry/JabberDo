@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import datetime
+
 import gettext
 import json
 
@@ -65,7 +65,7 @@ class ListRouter(BaseRouter):
                         task_params = json.loads(task_str)
                         for task_timestamp, for_jid in task_params.items():
                             task_timestamp = int(task_timestamp)
-                            task_datetime = datetime.datetime.utcfromtimestamp(task_timestamp).strftime('%d.%m.%Y %H:%M:%S')
+                            task_datetime = self.__task_repository.task_local_datetime(task_timestamp)
                             self.add_reply_message("%s: %s. %s" % (task_datetime, task.id_, task.title))
         else:
             self.add_reply_message(_("No ⏰ tasks"))

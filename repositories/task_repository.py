@@ -3,6 +3,9 @@
 
 import json
 
+from dateutil import tz
+from datetime import datetime
+
 from models.list_model import ListModel
 from models.task_model import TaskModel
 from repositories.base_repository import BaseRedisRepository
@@ -54,6 +57,14 @@ class RedisTaskRepository(BaseRedisRepository):
         transaction.rpush("list:%s:tasks:completed" % task.list_id, task.id_)
         transaction.lrem("list:%s:tasks" % task.list_id, 0, task.id_)
         return transaction.execute()
+
+    def task_local_datetime(self, task_timestamp):
+        task_utc_datetime = datetime.utcfromtimestamp(task_timestamp)
+        from_zone = tz.tzutc()
+        to_zone = tz.tzlocal()
+        task_utc_datetime = task_utc_datetime.replace(tzinfo=from_zone)
+        local_datetime = task_utc_datetime.astimezone(to_zone)
+        return local_datetime.strftime('%d.%m.%Y %H:%M:%S')
 
     def schedule_task(self, task: TaskModel, for_jid, timestamp):
         schedule_record = json.dumps({timestamp: for_jid})

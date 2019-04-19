@@ -38,7 +38,7 @@ class ScheduleRouter:
                     for task_timestamp, for_jid in task_params.items():
                         task_timestamp =  int(task_timestamp)
                         if current_timestamp > task_timestamp:
-                            task_datetime = datetime.datetime.utcfromtimestamp(task_timestamp).strftime('%d.%m.%Y %H:%M:%S')
+                            task_datetime = self.__task_repository.task_local_datetime(task_timestamp)
                             m = Message()
                             m["to"] = for_jid
                             m["body"] = _("Reminder for task %s from list %s, scheduled at %s") % (task.title, task_list.name, task_datetime)
