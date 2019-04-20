@@ -13,25 +13,25 @@ Just text `?`
 **Control lists:**
 
 `..` - output existing lists  
-`.<list_name>` - add or display list, i.e. `.tasks`. Also makes list "active".  
+`.list_name` - add or display list, i.e. `.tasks`. Also makes list "active".  
 `.` - display active list  
 `.--` - clear tasks of the active list  
 `.!` - display completed tasks of the active list  
 `.!-` - clear completed tasks of the active list  
-`.-<list_name>` - delete list and all of its tasks     
+`.-list_name` - delete list and all of its tasks     
 
 **Control tasks:**
     
-Any message - adds task to the active list    
-`:<message>` - add multiple tasks from multiline message  
-`!<number>` - move task `<number>`  
-`-<number>` - delete task `<number>` from list, i.e. -1 deletes first task.
-`><number> <title>` - edit task `<number>` from current list, set it new title
-`^<number> <list_name>` - move task `<number>` from current list to <list_name> list
+`any message` - adds task to the active list    
+`:any multiline message` - add multiple tasks from multiline message  
+`!task_number>` - move task `task_number` to complete tasks    
+`-task_number` - delete task `task_number` from list, i.e. -1 deletes first task.
+`>task_number task_title` - edit task `task_number` from current list, set it new `title`  
+`^task_number list_name` - move task `task_number` from current list to `list_name` list    
 
 **Schedule tasks:**
 
-`*<number> time` or `*<number> date time` - set reminder for task `<number>` from active list to provided time or date/time
+`*task_number time` or `*task_number date time` - set reminder for task `<number>` from active list to provided time or date/time
     
     example: *1 22:04 - set reminder for task 1 from active list to 22:04 today.
 
