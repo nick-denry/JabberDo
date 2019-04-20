@@ -41,6 +41,8 @@ class HelpRouter(BaseRouter):
         self.add_reply_message(_(":<message> - add multiple tasks from multiline message"))
         self.add_reply_message(_("!<number> - move task <number> to completed"))
         self.add_reply_message(_("-<number> - delete task <number> from list, i.e. -1 deletes first task."))
+        self.add_reply_message(_("`><number> <title>` - edit task `<number>` from current list, set it new title"))
+        self.add_reply_message(_("`^<number> <list_name>` - move task `<number>` from current list to <list_name> list"))
         self.add_reply_message(" ")
         self.add_reply_message(_("*<number> time date - set reminder for task <number> to time/date"))
         self.add_reply_message(_(".* - list scheduled tasks"))

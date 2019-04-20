@@ -30,14 +30,13 @@ class RedisTaskRepository(BaseRedisRepository):
     def add_task(self, task_title: str, the_list: ListModel):
         task_id = self.__create_id()
         task = TaskModel(task_id, task_title, the_list.id_)
-        task_dict = self.serialize(task)
         self.redis_connection.incr("tasks:index")
         self.redis_connection.rpush("list:%s:tasks" % the_list.id_, task.id_)
-        self.redis_connection.hmset("task:%s" % task.id_, task_dict)
-        pass
+        return self.save_task(task)
 
-    def set_task_complete(self, task_id):
-        pass
+    def save_task(self, task):
+        task_dict = self.serialize(task)
+        return self.redis_connection.hmset("task:%s" % task.id_, task_dict)
 
     def get_task_from_list_number(self, the_list: ListModel, task_number_in_list: int) -> TaskModel:
         task_id = self.redis_connection.lindex("list:%s:tasks" % the_list.id_, task_number_in_list)
@@ -90,6 +89,11 @@ class RedisTaskRepository(BaseRedisRepository):
             transaction.srem("scheduled", task.id_)
             transaction.execute()
         return result
+
+    def move_task(self, task: TaskModel, to_list):
+        print(task)
+        self.add_task(task.title, to_list)
+        return self.remove_task(task)
 
 
 

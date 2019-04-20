@@ -126,6 +126,53 @@ class TaskRouter(BaseRouter):
         else:
             self.add_reply_message(_("٩(͡๏̯͡๏)۶ Please provide task number to unschedule ⏰"))
 
+    def __update_task_action(self, message):
+        try:
+            task_sequential_number, task_title = message.split(" ", 1)
+            if task_sequential_number.isdigit():
+                task_number = int(task_sequential_number)-1
+                if task_title:
+                    the_list = self.__list_repository.get_active(self.current_jid)
+                    task = self.__task_repository.get_task_from_list_number(the_list, task_number)
+                    task.title = task_title
+                    self.__task_repository.save_task(task)
+                    self.add_reply_message(_("🖍️ Task %s updated") % task_sequential_number)
+                else:
+                    self.add_reply_message(_("No task provided ٩(͡๏̯͡๏)۶"))
+            else:
+                self.add_reply_message(
+                    _("Please send task number (i.e. #*33) to schedule. See current list tasks with ."))
+        except ValueError:
+            self.add_reply_message(_("No date time provided ٩(͡๏̯͡๏)۶"))
+
+    def __move_task_to_list_action(self, message):
+        try:
+            task_sequential_number, list_name_to_move = message.split(" ", 1)
+        except ValueError:
+            self.add_reply_message(_("No list name provided ٩(͡๏̯͡๏)۶"))
+
+        if task_sequential_number.isdigit():
+            task_number = int(task_sequential_number) - 1
+            if list_name_to_move:
+                current_list = self.__list_repository.get_active(self.current_jid)
+                task = self.__task_repository.get_task_from_list_number(current_list, task_number)
+                if task:
+                    to_list = self.__list_repository.get_list_by_name(list_name_to_move)
+                    if to_list:
+                        self.__task_repository.move_task(task, to_list)
+                        self.add_reply_message(
+                            _("➡️ Task %s moved to list %s") % (task_sequential_number, list_name_to_move))
+                    else:
+                        self.add_reply_message(_("List %s not found") % message)
+                else:
+                    self.add_reply_message(
+                        _("No task #%s found in active list") % task_number)
+            else:
+                self.add_reply_message(_("No task provided ٩(͡๏̯͡๏)۶"))
+        else:
+            self.add_reply_message(
+                _("Please send task number (i.e. #*33) to schedule. See current list tasks with ."))
+
     def route(self, message):
         command = self.extract_command(message)
         if command == "!":
@@ -140,6 +187,18 @@ class TaskRouter(BaseRouter):
                 self.__add_tasks_multiline_action(message)
             else:
                 self.add_reply_message(_("Text something (◔_◔)"))
+        elif command == ">":
+            message = self.extract_command_message(command, message)
+            if message:
+                self.__update_task_action(message)
+            else:
+                self.add_reply_message(_("Text number to edit task (◔_◔)"))
+        elif command == "^":
+            message = self.extract_command_message(command, message)
+            if message:
+                self.__move_task_to_list_action(message)
+            else:
+                self.add_reply_message(_("Text number and list to move task (◔_◔)"))
         elif command == "*":
             message = self.extract_command_message(command, message)
             command = self.extract_command(message)
@@ -150,7 +209,7 @@ class TaskRouter(BaseRouter):
                 if message:
                     self.__schedule_task_action(message)
                 else:
-                    self.add_reply_message(_("Text something (◔_◔) to ⏰ the task"))
+                    self.add_reply_message(_("Text number (◔_◔) to ⏰ the task"))
         else:
             # Get active list and add task to it
             the_list = self.__list_repository.get_active(self.current_jid)

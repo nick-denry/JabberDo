@@ -26,6 +26,8 @@ Any message - adds task to the active list
 `:<message>` - add multiple tasks from multiline message  
 `!<number>` - move task `<number>`  
 `-<number>` - delete task `<number>` from list, i.e. -1 deletes first task.
+`><number> <title>` - edit task `<number>` from current list, set it new title
+`^<number> <list_name>` - move task `<number>` from current list to <list_name> list
 
 **Schedule tasks:**
 
