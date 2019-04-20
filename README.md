@@ -31,7 +31,7 @@ Just text `?`
 
 **Schedule tasks:**
 
-`*task_number time` or `*task_number date time` - set reminder for task `<number>` from active list to provided time or date/time
+`*task_number time` or `*task_number date time` - set reminder for task `task_number` from active list to provided time or date/time
     
     example: *1 22:04 - set reminder for task 1 from active list to 22:04 today.
 
