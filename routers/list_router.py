@@ -40,35 +40,35 @@ class ListRouter(BaseRouter):
 
     def __display_list_tasks_action(self, the_list, no_tasks_message, tasks_type="tasks"):
         list_tasks_of_type = getattr(the_list, tasks_type)
-        if list_tasks_of_type:
-            for idx, task in enumerate(list_tasks_of_type):
-                self.add_reply_message("%i. %s" % (idx + 1, task.title))
-        else:
+        if not list_tasks_of_type:
             self.add_reply_message(no_tasks_message)
+            return None
+        for idx, task in enumerate(list_tasks_of_type):
+            self.add_reply_message("%i. %s" % (idx + 1, task.title))
 
     def __display_active_list_action(self):
         the_list = self.__list_repository.get_active(self.current_jid)
-        if the_list:
-            self.add_reply_message(_("Active list is %s") % the_list.name)
-            no_tasks_messsage = _("List is empty. Add task to it by send some message.")
-            self.__display_list_tasks_action(the_list, no_tasks_messsage)
-        else:
+        if not the_list:
             self.add_reply_message(_("No active list found. See lists with .. or choose one by name .<list_name>"))
+            return None
+        self.add_reply_message(_("Active list is %s") % the_list.name)
+        no_tasks_messsage = _("List is empty. Add task to it by send some message.")
+        self.__display_list_tasks_action(the_list, no_tasks_messsage)
 
     def __display_schedule_list_action(self):
         scheduled_tasks_info = self.__list_repository.get_scheduled_tasks_info()
-        if scheduled_tasks_info:
-            for task_info in scheduled_tasks_info:
-                for task_id, task_params_str in task_info.items():
-                    task = self.__task_repository.get_task(task_id)
-                    for task_str in task_params_str:
-                        task_params = json.loads(task_str)
-                        for task_timestamp, for_jid in task_params.items():
-                            task_timestamp = int(task_timestamp)
-                            task_datetime = self.__task_repository.task_local_datetime(task_timestamp)
-                            self.add_reply_message("%s: %s. %s" % (task_datetime, task.id_, task.title))
-        else:
+        if not scheduled_tasks_info:
             self.add_reply_message(_("No ⏰ tasks"))
+            return None
+        for task_info in scheduled_tasks_info:
+            for task_id, task_params_str in task_info.items():
+                task = self.__task_repository.get_task(task_id)
+                for task_str in task_params_str:
+                    task_params = json.loads(task_str)
+                    for task_timestamp, for_jid in task_params.items():
+                        task_timestamp = int(task_timestamp)
+                        task_datetime = self.__task_repository.task_local_datetime(task_timestamp)
+                        self.add_reply_message("%s: %s. %s" % (task_datetime, task.id_, task.title))
 
     def route(self, message: str):
         if message:
