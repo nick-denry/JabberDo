@@ -62,31 +62,31 @@ class TaskRouter(BaseRouter):
         :param sequential: str Sequential number of task in active list
         :return:
         """
-        if task_sequential_number.isdigit():
-            the_list = self.__list_repository.get_active(self.current_jid)
-            if the_list:
-                task_number = int(task_sequential_number) - 1
-                task = self.__task_repository.get_task_from_list_number(the_list, task_number_in_list=task_number)
-                if task:
-                    self.__task_repository.remove_task(task)
-                    self.add_reply_message(_("Remove task #%s") % task_sequential_number)
-                else:
-                    self.add_reply_message(_("No task #%s found in the %s list") % (task_sequential_number, the_list.name))
-            else:
-                self.add_reply_message(
-                    _("No active list found. See lists with .. or choose one by name .<list_name>"))
-        else:
+        the_list = self.__list_repository.get_active(self.current_jid)
+        if not the_list:
+            self.add_reply_message(
+                _("No active list found. See lists with .. or choose one by name .<list_name>"))
+            return None
+        if not task_sequential_number.isdigit():
             self.add_reply_message(_("Please send task number (i.e. #-33) to delete. See current list tasks with ."))
+            return None
+        task_number = int(task_sequential_number) - 1
+        task = self.__task_repository.get_task_from_list_number(the_list, task_number_in_list=task_number)
+        if task:
+            self.__task_repository.remove_task(task)
+            self.add_reply_message(_("Remove task #%s") % task_sequential_number)
+        else:
+            self.add_reply_message(_("No task #%s found in the %s list") % (task_sequential_number, the_list.name))
 
     def __add_tasks_multiline_action(self, message):
         the_list = self.__list_repository.get_active(self.current_jid)
-        if the_list:
-            for line in message.splitlines():
-                self.__task_repository.add_task(line, the_list)
-            self.add_reply_message(_("(ʘ‿ʘ)╯ alot of tasks added"))
-        else:
+        if not the_list:
             self.add_reply_message(
                 _("No active list found. See lists with .. or choose one by name .<list_name>"))
+            return None
+        for line in message.splitlines():
+            self.__task_repository.add_task(line, the_list)
+        self.add_reply_message(_("(ʘ‿ʘ)╯ alot of tasks added"))
 
     def __schedule_task_action(self, message):
         try:
@@ -116,14 +116,14 @@ class TaskRouter(BaseRouter):
             self.add_reply_message(_("No date time provided ٩(͡๏̯͡๏)۶"))
 
     def __unschedule_task_action(self, message):
-        if message:
-            if message.isdigit():
-                task = self.__task_repository.get_task(message)
-                self.__task_repository.unschedule_task_at_all(task)
-            else:
-                self.add_reply_message(_("⏰ can unschedule only task number ಠ_ಠ"))
-        else:
+        if not message:
             self.add_reply_message(_("٩(͡๏̯͡๏)۶ Please provide task number to unschedule ⏰"))
+            return None
+        if message.isdigit():
+            task = self.__task_repository.get_task(message)
+            self.__task_repository.unschedule_task_at_all(task)
+        else:
+            self.add_reply_message(_("⏰ can unschedule only task number ಠ_ಠ"))
 
     def __update_task_action(self, message):
         try:
