@@ -50,13 +50,11 @@ class TaskRouter(BaseRouter):
         task_number = int(task_sequential_number) - 1
         task = self.__task_repository.get_task_from_list_number(the_list, task_number_in_list=task_number)
         if task:
-            # self.__task_repository.remove_task(task)
             self.__task_repository.set_task_complete(task)
             self.add_reply_message(_("Set task #%s complete") % task_sequential_number)
         else:
             self.add_reply_message(
                 _("No task #%s found in the %s list") % (task_sequential_number, the_list.name))
-
 
     def __remove_task_action(self, task_sequential_number):
         """
