@@ -187,6 +187,14 @@ class TaskRouter(BaseRouter):
         self.add_reply_message(
             _("➡️ Task %s moved to list %s") % (task_sequential_number, list_name_to_move))
 
+    def __add_task_action(self, message):
+        the_list = self.__list_repository.get_active(self.current_jid)
+        if not the_list:
+            self.add_reply_message(_("No active list found. See lists with .. or choose one by name .<list_name>"))
+            return None
+        self.__task_repository.add_task(message, the_list)
+        self.add_reply_message(_("Task %s added to list %s") % (message, the_list.name))
+
     def route(self, message):
         command = self.extract_command(message)
         if command == "!":
@@ -226,11 +234,6 @@ class TaskRouter(BaseRouter):
                     self.add_reply_message(_("Text number (◔_◔) to ⏰ the task"))
         else:
             # Get active list and add task to it
-            the_list = self.__list_repository.get_active(self.current_jid)
-            if the_list:
-                self.__task_repository.add_task(message, the_list)
-                self.add_reply_message(_("Task %s added to list %s") % (message, the_list.name))
-            else:
-                self.add_reply_message(_("No active list found. See lists with .. or choose one by name .<list_name>"))
+            self.__add_task_action(message)
         print(self.reply_message)
         return self.xmpp_message.reply(self.reply_message).send()
