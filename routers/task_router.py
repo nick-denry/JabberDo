@@ -89,31 +89,36 @@ class TaskRouter(BaseRouter):
         self.add_reply_message(_("(ʘ‿ʘ)╯ alot of tasks added"))
 
     def __schedule_task_action(self, message):
+        the_list = self.__list_repository.get_active(self.current_jid)
+        if not the_list:
+            self.add_reply_message(
+                _("No active list found. See lists with .. or choose one by name .<list_name>"))
+            return None
         try:
             task_sequential_number, date_andor_time = message.split(" ", 1)
-            if task_sequential_number.isdigit():
-                task_number = int(task_sequential_number)-1
-                if date_andor_time:
-                    datetime = parse(date_andor_time)
-                    if datetime:
-                        timestamp = int(datetime.timestamp())
-                        the_list = self.__list_repository.get_active(self.current_jid)
-                        task = self.__task_repository.get_task_from_list_number(the_list, task_number)
-                        if task:
-                            self.__task_repository.schedule_task(task, self.current_jid, timestamp)
-                            self.add_reply_message(_("⏰ Task #%s scheduled to %s") % (task_sequential_number, datetime))
-                        else:
-                            self.add_reply_message(
-                                _("No task #%s found in the %s list") % (task_number, the_list.name))
-                    else:
-                        self.add_reply_message(_("Error convert date ಠ_ಠ"))
-                else:
-                    self.add_reply_message(_("No date time provided ٩(͡๏̯͡๏)۶"))
-            else:
-                self.add_reply_message(
-                    _("Please send task number (i.e. #*33) to schedule. See current list tasks with ."))
         except ValueError:
             self.add_reply_message(_("No date time provided ٩(͡๏̯͡๏)۶"))
+            return None
+        if not task_sequential_number.isdigit():
+            self.add_reply_message(
+                _("Please send task number (i.e. #*33) to schedule. See current list tasks with ."))
+            return None
+        task_number = int(task_sequential_number)-1
+        if not date_andor_time:
+            self.add_reply_message(_("No date time provided ٩(͡๏̯͡๏)۶"))
+            return None
+        datetime = parse(date_andor_time)
+        if not datetime:
+            self.add_reply_message(_("Error convert date ಠ_ಠ"))
+            return None
+        timestamp = int(datetime.timestamp())
+        task = self.__task_repository.get_task_from_list_number(the_list, task_number)
+        if task:
+            self.__task_repository.schedule_task(task, self.current_jid, timestamp)
+            self.add_reply_message(_("⏰ Task #%s scheduled to %s") % (task_sequential_number, datetime))
+        else:
+            self.add_reply_message(
+                _("No task #%s found in the %s list") % (task_number, the_list.name))
 
     def __unschedule_task_action(self, message):
         if not message:
@@ -126,51 +131,60 @@ class TaskRouter(BaseRouter):
             self.add_reply_message(_("⏰ can unschedule only task number ಠ_ಠ"))
 
     def __update_task_action(self, message):
+        the_list = self.__list_repository.get_active(self.current_jid)
+        if not the_list:
+            self.add_reply_message(
+                _("No active list found. See lists with .. or choose one by name .<list_name>"))
+            return None
         try:
             task_sequential_number, task_title = message.split(" ", 1)
-            if task_sequential_number.isdigit():
-                task_number = int(task_sequential_number)-1
-                if task_title:
-                    the_list = self.__list_repository.get_active(self.current_jid)
-                    task = self.__task_repository.get_task_from_list_number(the_list, task_number)
-                    task.title = task_title
-                    self.__task_repository.save_task(task)
-                    self.add_reply_message(_("🖍️ Task %s updated") % task_sequential_number)
-                else:
-                    self.add_reply_message(_("No task provided ٩(͡๏̯͡๏)۶"))
-            else:
-                self.add_reply_message(
-                    _("Please send task number (i.e. #*33) to schedule. See current list tasks with ."))
         except ValueError:
             self.add_reply_message(_("No date time provided ٩(͡๏̯͡๏)۶"))
+            return None
+        if not task_sequential_number.isdigit():
+            self.add_reply_message(
+                _("Please send task number (i.e. #*33) to schedule. See current list tasks with ."))
+            return None
+        task_number = int(task_sequential_number)-1
+        if task_title:
+            task = self.__task_repository.get_task_from_list_number(the_list, task_number)
+            task.title = task_title
+            self.__task_repository.save_task(task)
+            self.add_reply_message(_("🖍️ Task %s updated") % task_sequential_number)
+        else:
+            self.add_reply_message(_("No task provided ٩(͡๏̯͡๏)۶"))
 
     def __move_task_to_list_action(self, message):
+        current_list = self.__list_repository.get_active(self.current_jid)
+        if not current_list:
+            self.add_reply_message(
+                _("No active list found. See lists with .. or choose one by name .<list_name>"))
+            return None
         try:
             task_sequential_number, list_name_to_move = message.split(" ", 1)
         except ValueError:
             self.add_reply_message(_("No list name provided ٩(͡๏̯͡๏)۶"))
-
-        if task_sequential_number.isdigit():
-            task_number = int(task_sequential_number) - 1
-            if list_name_to_move:
-                current_list = self.__list_repository.get_active(self.current_jid)
-                task = self.__task_repository.get_task_from_list_number(current_list, task_number)
-                if task:
-                    to_list = self.__list_repository.get_list_by_name(list_name_to_move)
-                    if to_list:
-                        self.__task_repository.move_task(task, to_list)
-                        self.add_reply_message(
-                            _("➡️ Task %s moved to list %s") % (task_sequential_number, list_name_to_move))
-                    else:
-                        self.add_reply_message(_("List %s not found") % message)
-                else:
-                    self.add_reply_message(
-                        _("No task #%s found in active list") % task_number)
-            else:
-                self.add_reply_message(_("No task provided ٩(͡๏̯͡๏)۶"))
-        else:
+            return None
+        if not task_sequential_number.isdigit():
             self.add_reply_message(
                 _("Please send task number (i.e. #*33) to schedule. See current list tasks with ."))
+            return None
+        task_number = int(task_sequential_number) - 1
+        if not list_name_to_move:
+            self.add_reply_message(_("No list name provided ٩(͡๏̯͡๏)۶"))
+            return None
+        task = self.__task_repository.get_task_from_list_number(current_list, task_number)
+        if not task:
+            self.add_reply_message(
+                _("No task #%s found in active list") % task_number)
+            return None
+        to_list = self.__list_repository.get_list_by_name(list_name_to_move)
+        if to_list:
+            self.__task_repository.move_task(task, to_list)
+            self.add_reply_message(
+                _("➡️ Task %s moved to list %s") % (task_sequential_number, list_name_to_move))
+        else:
+            self.add_reply_message(_("List %s not found") % message)
 
     def route(self, message):
         command = self.extract_command(message)
