@@ -49,12 +49,12 @@ class TaskRouter(BaseRouter):
             return None
         task_number = int(task_sequential_number) - 1
         task = self.__task_repository.get_task_from_list_number(the_list, task_number_in_list=task_number)
-        if task:
-            self.__task_repository.set_task_complete(task)
-            self.add_reply_message(_("Set task #%s complete") % task_sequential_number)
-        else:
+        if not task:
             self.add_reply_message(
                 _("No task #%s found in the %s list") % (task_sequential_number, the_list.name))
+            return None
+        self.__task_repository.set_task_complete(task)
+        self.add_reply_message(_("Set task #%s complete") % task_sequential_number)
 
     def __remove_task_action(self, task_sequential_number):
         """
@@ -72,11 +72,11 @@ class TaskRouter(BaseRouter):
             return None
         task_number = int(task_sequential_number) - 1
         task = self.__task_repository.get_task_from_list_number(the_list, task_number_in_list=task_number)
-        if task:
-            self.__task_repository.remove_task(task)
-            self.add_reply_message(_("Remove task #%s") % task_sequential_number)
-        else:
+        if not task:
             self.add_reply_message(_("No task #%s found in the %s list") % (task_sequential_number, the_list.name))
+            return None
+        self.__task_repository.remove_task(task)
+        self.add_reply_message(_("Remove task #%s") % task_sequential_number)
 
     def __add_tasks_multiline_action(self, message):
         the_list = self.__list_repository.get_active(self.current_jid)
@@ -124,11 +124,12 @@ class TaskRouter(BaseRouter):
         if not message:
             self.add_reply_message(_("٩(͡๏̯͡๏)۶ Please provide task number to unschedule ⏰"))
             return None
-        if message.isdigit():
-            task = self.__task_repository.get_task(message)
-            self.__task_repository.unschedule_task_at_all(task)
-        else:
+        if not message.isdigit():
             self.add_reply_message(_("⏰ can unschedule only task number ಠ_ಠ"))
+            return None
+        task = self.__task_repository.get_task(message)
+        self.__task_repository.unschedule_task_at_all(task)
+
 
     def __update_task_action(self, message):
         the_list = self.__list_repository.get_active(self.current_jid)
@@ -146,13 +147,13 @@ class TaskRouter(BaseRouter):
                 _("Please send task number (i.e. #*33) to schedule. See current list tasks with ."))
             return None
         task_number = int(task_sequential_number)-1
-        if task_title:
-            task = self.__task_repository.get_task_from_list_number(the_list, task_number)
-            task.title = task_title
-            self.__task_repository.save_task(task)
-            self.add_reply_message(_("🖍️ Task %s updated") % task_sequential_number)
-        else:
+        if not task_title:
             self.add_reply_message(_("No task provided ٩(͡๏̯͡๏)۶"))
+            return None
+        task = self.__task_repository.get_task_from_list_number(the_list, task_number)
+        task.title = task_title
+        self.__task_repository.save_task(task)
+        self.add_reply_message(_("🖍️ Task %s updated") % task_sequential_number)
 
     def __move_task_to_list_action(self, message):
         current_list = self.__list_repository.get_active(self.current_jid)
@@ -179,12 +180,12 @@ class TaskRouter(BaseRouter):
                 _("No task #%s found in active list") % task_number)
             return None
         to_list = self.__list_repository.get_list_by_name(list_name_to_move)
-        if to_list:
-            self.__task_repository.move_task(task, to_list)
-            self.add_reply_message(
-                _("➡️ Task %s moved to list %s") % (task_sequential_number, list_name_to_move))
-        else:
+        if not to_list:
             self.add_reply_message(_("List %s not found") % message)
+            return None
+        self.__task_repository.move_task(task, to_list)
+        self.add_reply_message(
+            _("➡️ Task %s moved to list %s") % (task_sequential_number, list_name_to_move))
 
     def route(self, message):
         command = self.extract_command(message)
