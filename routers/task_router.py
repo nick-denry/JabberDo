@@ -38,24 +38,25 @@ class TaskRouter(BaseRouter):
         return super().reply_message
 
     def __set_task_complete_action(self, task_sequential_number):
-        if task_sequential_number.isdigit():
-            the_list = self.__list_repository.get_active(self.current_jid)
-            if the_list:
-                task_number = int(task_sequential_number) - 1
-                task = self.__task_repository.get_task_from_list_number(the_list, task_number_in_list=task_number)
-                if task:
-                    # self.__task_repository.remove_task(task)
-                    self.__task_repository.set_task_complete(task)
-                    self.add_reply_message(_("Set task #%s complete") % task_sequential_number)
-                else:
-                    self.add_reply_message(
-                        _("No task #%s found in the %s list") % (task_sequential_number, the_list.name))
-            else:
-                self.add_reply_message(
-                    _("No active list found. See lists with .. or choose one by name .<list_name>"))
+        the_list = self.__list_repository.get_active(self.current_jid)
+        if not the_list:
+            self.add_reply_message(
+                _("No active list found. See lists with .. or choose one by name .<list_name>"))
+            return None
+        if not task_sequential_number.isdigit():
+            self.add_reply_message(
+                _("Please send task number (i.e. !33) to set task 33 complete. See current list tasks with ."))
+            return None
+        task_number = int(task_sequential_number) - 1
+        task = self.__task_repository.get_task_from_list_number(the_list, task_number_in_list=task_number)
+        if task:
+            # self.__task_repository.remove_task(task)
+            self.__task_repository.set_task_complete(task)
+            self.add_reply_message(_("Set task #%s complete") % task_sequential_number)
         else:
             self.add_reply_message(
-                _("Please send task number (i.e. #!33) to set complete. See current list tasks with ."))
+                _("No task #%s found in the %s list") % (task_sequential_number, the_list.name))
+
 
     def __remove_task_action(self, task_sequential_number):
         """
