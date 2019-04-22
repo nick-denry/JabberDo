@@ -49,16 +49,16 @@ class ListRouter(BaseRouter):
     def __display_active_list_action(self):
         the_list = self.__list_repository.get_active(self.current_jid)
         if not the_list:
-            self.add_reply_message(_("No active list found. See lists with .. or choose one by name .<list_name>"))
+            self.add_reply_message(_(u"No active list found. See lists with .. or choose one by name .<list_name>"))
             return None
-        self.add_reply_message(_("Active list is %s") % the_list.name)
-        no_tasks_messsage = _("List is empty. Add task to it by send some message.")
+        self.add_reply_message(_(u"Active list is %s") % the_list.name)
+        no_tasks_messsage = _(u"List is empty. Add task to it by send some message.")
         self.__display_list_tasks_action(the_list, no_tasks_messsage)
 
     def __display_schedule_list_action(self):
         scheduled_tasks_info = self.__list_repository.get_scheduled_tasks_info()
         if not scheduled_tasks_info:
-            self.add_reply_message(_("No ⏰ tasks"))
+            self.add_reply_message(_(u"No ⏰ tasks"))
             return None
         for task_info in scheduled_tasks_info:
             for task_id, task_params_str in task_info.items():
@@ -73,9 +73,9 @@ class ListRouter(BaseRouter):
     def __display_all_list_names_action(self):
         all_list_names = self.__list_repository.get_all_lists_names()
         if not all_list_names:
-            self.add_reply_message(_("No lists. Add one by typing .<list_name>"))
+            self.add_reply_message(_(u"No lists. Add one by typing .<list_name>"))
             return None
-        self.add_reply_message(_("All the lists:"))
+        self.add_reply_message(_(u"All the lists:"))
         for list_name in all_list_names:
             self.add_reply_message(list_name)
 
@@ -83,21 +83,21 @@ class ListRouter(BaseRouter):
         the_list = self.__list_repository.get_active(self.current_jid)
         if not the_list:
             self.add_reply_message(
-                _("No active list found. See lists with .. or choose one by name .<list_name>"))
+                _(u"No active list found. See lists with .. or choose one by name .<list_name>"))
             return None
         self.__list_repository.remove_list_tasks(the_list)
-        self.add_reply_message(_("Clear tasks of the %s list") % the_list.name)
+        self.add_reply_message(_(u"Clear tasks of the %s list") % the_list.name)
 
     def __remove_list_action(self, list_name: str):
         if not list_name:
-            self.add_reply_message(_("Need a list name to delete"))
+            self.add_reply_message(_(u"Need a list name to delete"))
             return None
         # Delete list and remove from current jid active lists
         result = self.__list_repository.remove_list(list_name)
         if result:
-            self.add_reply_message(_("Delete list %s") % list_name)
+            self.add_reply_message(_(u"Delete list %s") % list_name)
         else:
-            self.add_reply_message(_("List %s not found") % list_name)
+            self.add_reply_message(_(u"List %s not found") % list_name)
 
     def __process_list_action(self, list_name: str):
         # Check if list exits
@@ -105,18 +105,18 @@ class ListRouter(BaseRouter):
         # If not add
         if not is_list_exists:
             self.__list_repository.add_list(list_name)
-            self.add_reply_message(_("Added list %s") % list_name)
+            self.add_reply_message(_(u"Added list %s") % list_name)
         # Set active for current user & display
         self.__list_repository.set_active(list_name, self.current_jid)
         self.__display_active_list_action()
 
     def __clear_list_completed_taks_action(self, the_list: ListModel):
         self.__list_repository.remove_list_completed_tasks(the_list)
-        self.add_reply_message(_("Clear completed tasks of the %s list") % the_list.name)
+        self.add_reply_message(_(u"Clear completed tasks of the %s list") % the_list.name)
 
     def __display_completed_task_action(self, the_list: ListModel):
-        self.add_reply_message(_("Completed tasks of the %s list:") % the_list.name)
-        no_tasks_messsage = _("No completed tasks for this list. Complete one with !<number>.")
+        self.add_reply_message(_(u"Completed tasks of the %s list:") % the_list.name)
+        no_tasks_messsage = _(u"No completed tasks for this list. Complete one with !<number>.")
         self.__display_list_tasks_action(the_list, no_tasks_messsage, "completed_tasks")
 
     def route(self, message: str):
@@ -139,7 +139,7 @@ class ListRouter(BaseRouter):
                 the_list = self.__list_repository.get_active(self.current_jid)
                 if not the_list:
                     self.add_reply_message(
-                        _("No active list found. See lists with .. or choose one by name .<list_name>"))
+                        _(u"No active list found. See lists with .. or choose one by name .<list_name>"))
                     return None
                 # Clear completed tasks
                 if command == "-":

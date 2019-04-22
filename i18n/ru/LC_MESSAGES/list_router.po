@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2019-04-22 22:50+0300\n"
-"PO-Revision-Date: 2019-04-22 22:56+0300\n"
+"POT-Creation-Date: 2019-04-22 23:22+0300\n"
+"PO-Revision-Date: 2019-04-22 23:23+0300\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -30,8 +30,8 @@ msgid "List is empty. Add task to it by send some message."
 msgstr "Список пуст. Добавьте задачу, отправив любое сообщение."
 
 #: list_router.py:62
-msgid "No â° tasks"
-msgstr "Нет â° задач"
+msgid "No ⏰ tasks"
+msgstr "Нет ⏰ задач"
 
 #: list_router.py:77
 msgid "No lists. Add one by typing .<list_name>"
