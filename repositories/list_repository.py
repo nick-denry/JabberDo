@@ -41,17 +41,16 @@ class RedisListRepository(BaseRedisRepository):
 
     def get_list(self, list_id):
         list_dict = self.redis_connection.hgetall("list:%s" % list_id)
-        if list_dict:
-            the_list = self.unserialize(list_dict, ListModel)
-            list_tasks = self.__get_list_tasks(the_list.id_)
-            for task in list_tasks:
-                the_list.add_task(task)
-            list_completed_tasks = self.__get_list_tasks(the_list.id_, "tasks:completed")
-            for task in list_completed_tasks:
-                the_list.add_completed_task(task)
-            return the_list
-        else:
+        if not list_dict:
             return None
+        the_list = self.unserialize(list_dict, ListModel)
+        list_tasks = self.__get_list_tasks(the_list.id_)
+        for task in list_tasks:
+            the_list.add_task(task)
+        list_completed_tasks = self.__get_list_tasks(the_list.id_, "tasks:completed")
+        for task in list_completed_tasks:
+            the_list.add_completed_task(task)
+        return the_list
 
     def get_all_lists_names(self):
         return self.redis_connection.zrange("lists:names", 0, -1)
@@ -72,13 +71,14 @@ class RedisListRepository(BaseRedisRepository):
         return result
 
     def set_active(self, list_name, current_jid):
-        if self.is_list_exists(list_name):
-            list_id = self.__get_id_by_name(list_name)
-            transaction = self.redis_connection.pipeline()
-            transaction.sadd("list:%s:active_for" % list_id, current_jid)
-            transaction.set("%s:active:list" % current_jid, list_id)
-            return transaction.execute()
-        return False
+        if not self.is_list_exists(list_name):
+            return False
+        list_id = self.__get_id_by_name(list_name)
+        transaction = self.redis_connection.pipeline()
+        transaction.sadd("list:%s:active_for" % list_id, current_jid)
+        transaction.set("%s:active:list" % current_jid, list_id)
+        return transaction.execute()
+
 
     def get_active(self, current_jid):
         list_id = self.redis_connection.get("%s:active:list" % current_jid)
@@ -99,22 +99,21 @@ class RedisListRepository(BaseRedisRepository):
     def remove_list(self, list_name):
         # Remove lists tasks
         the_list = self.get_list_by_name(list_name)
-        if the_list:
-            self.remove_list_tasks(the_list)
-            self.remove_list_completed_tasks(the_list)
-            list_active_for = self.redis_connection.smembers("list:%s:active_for" % the_list.id_)
-            # Remove list from active user lists
-            transaction = self.redis_connection.pipeline()
-            for user_jid in list_active_for:
-                transaction.delete("%s:active:list" % user_jid)
-            transaction.delete("list:%s:active_for" % the_list.id_)
-            # Remove list from indexes and itself
-            transaction.lrem("lists", 0, the_list.id_)
-            transaction.zrem("lists:names", the_list.name)
-            transaction.delete("list:%s" % the_list.id_)
-            return transaction.execute()
-        else:
+        if not the_list:
             return False
+        self.remove_list_tasks(the_list)
+        self.remove_list_completed_tasks(the_list)
+        list_active_for = self.redis_connection.smembers("list:%s:active_for" % the_list.id_)
+        # Remove list from active user lists
+        transaction = self.redis_connection.pipeline()
+        for user_jid in list_active_for:
+            transaction.delete("%s:active:list" % user_jid)
+        transaction.delete("list:%s:active_for" % the_list.id_)
+        # Remove list from indexes and itself
+        transaction.lrem("lists", 0, the_list.id_)
+        transaction.zrem("lists:names", the_list.name)
+        transaction.delete("list:%s" % the_list.id_)
+        return transaction.execute()
 
     def get_scheduled_tasks_info(self):
         scheduled_ids = self.get_scheduled_tasks_ids()

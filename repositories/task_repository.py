@@ -40,10 +40,9 @@ class RedisTaskRepository(BaseRedisRepository):
 
     def get_task_from_list_number(self, the_list: ListModel, task_number_in_list: int) -> TaskModel:
         task_id = self.redis_connection.lindex("list:%s:tasks" % the_list.id_, task_number_in_list)
-        if task_id:
-            return self.get_task(task_id)
-        else:
+        if not task_id:
             return False
+        return self.get_task(task_id)
 
     def remove_task(self, task: TaskModel, task_type="tasks"):
         transaction = self.redis_connection.pipeline()
@@ -79,6 +78,13 @@ class RedisTaskRepository(BaseRedisRepository):
         transaction.execute()
 
     def unschedule_task(self, task: TaskModel, for_jid, timestamp):
+        """
+        TODO: Rewrite
+        :param task:
+        :param for_jid:
+        :param timestamp:
+        :return:
+        """
         schedule_record = json.dumps({timestamp: for_jid})
         result = self.redis_connection.lrem("scheduled:%s" % task.id_, 0, schedule_record)
         # Check timestamp list
