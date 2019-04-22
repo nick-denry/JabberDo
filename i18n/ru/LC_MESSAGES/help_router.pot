@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2019-04-19 21:11+MSK\n"
+"POT-Creation-Date: 2019-04-22 22:41+MSK\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,55 +15,63 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
+#: help_router.py:32
+msgid ".. - output existing lists"
+msgstr ""
+
 #: help_router.py:33
-msgid ".. - output existing lists "
+msgid ".list_name - add or display list, i.e. `.tasks`. Also makes list \"active\"."
 msgstr ""
 
 #: help_router.py:34
-msgid ".<list_name> - add or display list, i.e. `.tasks`. Also makes list \"active\"."
-msgstr ""
-
-#: help_router.py:35
 msgid ". - display active list"
 msgstr ""
 
-#: help_router.py:36
+#: help_router.py:35
 msgid ".-- - clear tasks of the active list"
 msgstr ""
 
-#: help_router.py:37
+#: help_router.py:36
 msgid ".! - display completed tasks of the active list"
 msgstr ""
 
-#: help_router.py:38
+#: help_router.py:37
 msgid ".!- - clear completed tasks of the active list"
 msgstr ""
 
-#: help_router.py:39
-msgid ".-<list_name> - delete list and all of its tasks  "
+#: help_router.py:38
+msgid ".-list_name - delete list and all of its tasks"
 msgstr ""
 
-#: help_router.py:41
+#: help_router.py:40
 msgid "Any message - adds task to active list"
 msgstr ""
 
+#: help_router.py:41
+msgid ":any_multiline_message - add multiple tasks from multiline message"
+msgstr ""
+
 #: help_router.py:42
-msgid ":<message> - add multiple tasks from multiline message"
+msgid "!task_number [task_number] - move task(s) task_number to completed"
 msgstr ""
 
 #: help_router.py:43
-msgid "!<number - move task to completed"
+msgid "-task_number - delete task task_number from list, i.e. -1 deletes first task."
 msgstr ""
 
 #: help_router.py:44
-msgid "-<number> - delete task <number> from list, i.e. -1 deletes first task."
+msgid ">task_number title - edit task task_number from current list, set it new title"
 msgstr ""
 
-#: help_router.py:46
-msgid "*<number> time date - set reminder for task <number> to time/date"
+#: help_router.py:45
+msgid "^task_number list_name` - move task `task_umber` from current list to list_name list"
 msgstr ""
 
 #: help_router.py:47
+msgid "*task_number time date - set reminder for task task_number to time/date"
+msgstr ""
+
+#: help_router.py:48
 msgid ".* - list scheduled tasks"
 msgstr ""
 
