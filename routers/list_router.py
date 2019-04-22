@@ -70,40 +70,49 @@ class ListRouter(BaseRouter):
                         task_datetime = self.__task_repository.task_local_datetime(task_timestamp)
                         self.add_reply_message("%s: %s. %s" % (task_datetime, task.id_, task.title))
 
+    def __display_all_list_names_action(self):
+        all_list_names = self.__list_repository.get_all_lists_names()
+        if not all_list_names:
+            self.add_reply_message(_("No lists. Add one by typing .<list_name>"))
+            return None
+        self.add_reply_message(_("All the lists:"))
+        for list_name in all_list_names:
+            self.add_reply_message(list_name)
+
+    def __clear_list_tasks_action(self):
+        the_list = self.__list_repository.get_active(self.current_jid)
+        if not the_list:
+            self.add_reply_message(
+                _("No active list found. See lists with .. or choose one by name .<list_name>"))
+            return None
+        self.__list_repository.remove_list_tasks(the_list)
+        self.add_reply_message(_("Clear tasks of the %s list") % the_list.name)
+
+    def __remove_list_action(self, list_name: str):
+        if not list_name:
+            self.add_reply_message(_("Need a list name to delete"))
+            return None
+        # Delete list and remove from current jid active lists
+        result = self.__list_repository.remove_list(list_name)
+        if result:
+            self.add_reply_message(_("Delete list %s") % list_name)
+        else:
+            self.add_reply_message(_("List %s not found") % list_name)
+
     def route(self, message: str):
         if message:
             command = self.extract_command(message)
             if command == ".":
-                all_list_names = self.__list_repository.get_all_lists_names()
-                if all_list_names:
-                    self.add_reply_message(_("All the lists:"))
-                    for list_name in all_list_names:
-                        self.add_reply_message(list_name)
-                else:
-                    self.add_reply_message(_("No lists. Add one by typing .<list_name>"))
+                self.__display_all_list_names_action()
             elif command == '*':
                 self.__display_schedule_list_action()
             elif command == "-":
                 message = self.extract_command_message(command, message)
                 command = self.extract_command(message)
                 if command == "-":
-                    the_list = self.__list_repository.get_active(self.current_jid)
-                    if the_list:
-                        self.add_reply_message(_("Clear tasks of the %s list") % the_list.name)
-                        self.__list_repository.remove_list_tasks(the_list)
-                    else:
-                        self.add_reply_message(
-                            _("No active list found. See lists with .. or choose one by name .<list_name>"))
+                    self.__clear_list_tasks_action()
                 else:
-                    if message:
-                        # Delete list and remove from current jid active lists
-                        result = self.__list_repository.remove_list(message)
-                        if result:
-                            self.add_reply_message(_("Delete list %s") % message)
-                        else:
-                            self.add_reply_message(_("List %s not found") % message)
-                    else:
-                        self.add_reply_message(_("Need a list name to delete"))
+                    self.__remove_list_action(message)
             elif command == "!":
                 message = self.extract_command_message(command, message)
                 command = self.extract_command(message)
