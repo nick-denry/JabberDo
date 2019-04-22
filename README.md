@@ -24,7 +24,7 @@ Just text `?`
     
 `any message` - adds task to the active list    
 `:any multiline message` - add multiple tasks from multiline message  
-`!task_number [task_number]` - move task `task_number(s)` to complete tasks    
+`!task_number [task_number]` - move task(s) `task_number` to complete tasks    
 `-task_number` - delete task `task_number` from list, i.e. -1 deletes first task  
 `>task_number task_title` - edit task `task_number` from current list, set it new `title`  
 `^task_number list_name` - move task `task_number` from current list to `list_name` list    
