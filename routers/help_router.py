@@ -39,7 +39,7 @@ class HelpRouter(BaseRouter):
         self.add_reply_message(" ")
         self.add_reply_message(_("Any message - adds task to active list"))
         self.add_reply_message(_(":any_multiline_message - add multiple tasks from multiline message"))
-        self.add_reply_message(_("!task_number - move task task_number to completed"))
+        self.add_reply_message(_("!task_number [task_number] - move task task_number(s) to completed"))
         self.add_reply_message(_("-task_number - delete task task_number from list, i.e. -1 deletes first task."))
         self.add_reply_message(_(">task_number title - edit task task_number from current list, set it new title"))
         self.add_reply_message(_("^task_number list_name` - move task `task_umber` from current list to list_name list"))
