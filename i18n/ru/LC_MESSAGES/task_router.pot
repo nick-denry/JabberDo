@@ -1,0 +1,122 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2019-04-22 23:00+MSK\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: task_router.py:52 task_router.py:107 task_router.py:152
+msgid "No task #%s found in the %s list"
+msgstr ""
+
+#: task_router.py:55
+msgid "Set task #%s complete"
+msgstr ""
+
+#: task_router.py:64
+msgid "Please send task number or space-separated numbers (i.e. !33) to set task 33 complete. See current list tasks with ."
+msgstr ""
+
+#: task_router.py:69
+msgid "Please send numbers like !3 5 7 if you want to set multiple tasks complete."
+msgstr ""
+
+#: task_router.py:80 task_router.py:99 task_router.py:116 task_router.py:126
+#: task_router.py:169 task_router.py:193 task_router.py:224
+msgid "No active list found. See lists with .. or choose one by name .<list_name>"
+msgstr ""
+
+#: task_router.py:83
+msgid "Text number(s) to comlete task(s) (◔_◔)"
+msgstr ""
+
+#: task_router.py:102
+msgid "Please send task number (i.e. #-33) to delete. See current list tasks with ."
+msgstr ""
+
+#: task_router.py:110
+msgid "Remove task #%s"
+msgstr ""
+
+#: task_router.py:120
+msgid "(ʘ‿ʘ)╯ alot of tasks added"
+msgstr ""
+
+#: task_router.py:131 task_router.py:139 task_router.py:174
+msgid "No date time provided ٩(͡๏̯͡๏)۶"
+msgstr ""
+
+#: task_router.py:135 task_router.py:178 task_router.py:202
+msgid "Please send task number (i.e. #*33) to schedule. See current list tasks with ."
+msgstr ""
+
+#: task_router.py:143
+msgid "Error convert date ಠ_ಠ"
+msgstr ""
+
+#: task_router.py:149
+msgid "⏰ Task #%s scheduled to %s"
+msgstr ""
+
+#: task_router.py:156
+msgid "٩(͡๏̯͡๏)۶ Please provide task number to unschedule ⏰"
+msgstr ""
+
+#: task_router.py:159
+msgid "⏰ can unschedule only task number ಠ_ಠ"
+msgstr ""
+
+#: task_router.py:182
+msgid "No task provided ٩(͡๏̯͡๏)۶"
+msgstr ""
+
+#: task_router.py:187
+msgid "🖍️ Task %s updated"
+msgstr ""
+
+#: task_router.py:198 task_router.py:206
+msgid "No list name provided ٩(͡๏̯͡๏)۶"
+msgstr ""
+
+#: task_router.py:211
+msgid "No task #%s found in active list"
+msgstr ""
+
+#: task_router.py:215
+msgid "List %s not found"
+msgstr ""
+
+#: task_router.py:219
+msgid "➡️ Task %s moved to list %s"
+msgstr ""
+
+#: task_router.py:227
+msgid "Task %s added to list %s"
+msgstr ""
+
+#: task_router.py:242
+msgid "Text something (◔_◔)"
+msgstr ""
+
+#: task_router.py:248
+msgid "Text number to edit task (◔_◔)"
+msgstr ""
+
+#: task_router.py:254
+msgid "Text number and list to move task (◔_◔)"
+msgstr ""
+
+#: task_router.py:265
+msgid "Text number (◔_◔) to ⏰ the task"
+msgstr ""
+

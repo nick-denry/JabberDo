@@ -10,9 +10,8 @@ from models.list_model import ListModel
 from components.config import Config
 from routers.base_router import BaseRouter
 
-# TODO: Replace with gettext install
-# @see https://stackoverflow.com/questions/14946017/switch-translations-in-python-and-gettext
-_ = gettext.gettext
+translation = gettext.translation('task_router', localedir='i18n', languages=['ru'])
+translation.install()
 
 
 class TaskRouter(BaseRouter):

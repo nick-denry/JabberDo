@@ -1,0 +1,140 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2019-04-22 23:00+0300\n"
+"PO-Revision-Date: 2019-04-22 23:10+0300\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 1.8.7.1\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Language: ru\n"
+
+#: task_router.py:52 task_router.py:107 task_router.py:152
+msgid "No task #%s found in the %s list"
+msgstr "Задача №%s не найдена в списке %s"
+
+#: task_router.py:55
+msgid "Set task #%s complete"
+msgstr "Задача #%s выполнена"
+
+#: task_router.py:64
+msgid ""
+"Please send task number or space-separated numbers (i.e. !33) to set task 33 "
+"complete. See current list tasks with ."
+msgstr ""
+"Пожалуйста, отправьте номер или номера задач (напр. !33) чтобы выполнить "
+"задачу 33 . Просмотреть задачи текущего списка - ."
+
+#: task_router.py:69
+msgid ""
+"Please send numbers like !3 5 7 if you want to set multiple tasks complete."
+msgstr ""
+"Пожалуйста, оправьте номера как !3 5 7, если хотите выполнить несколько "
+"задач."
+
+#: task_router.py:80 task_router.py:99 task_router.py:116 task_router.py:126
+#: task_router.py:169 task_router.py:193 task_router.py:224
+msgid ""
+"No active list found. See lists with .. or choose one by name .<list_name>"
+msgstr ""
+"Нет активного списка. Показать списки .. или выберите по имени .имя_списка"
+
+#: task_router.py:83
+msgid "Text number(s) to comlete task(s) (â_â)"
+msgstr "Отправьте номер(а), чтобы выполнить задачу(и) (â_â)"
+
+#: task_router.py:102
+msgid ""
+"Please send task number (i.e. #-33) to delete. See current list tasks with ."
+msgstr ""
+"Пожалуйста, отправьте номер задачи (напр. -33) для удаления. Посмотреть "
+"текущие задачи -  ."
+
+#: task_router.py:110
+msgid "Remove task #%s"
+msgstr "Задача №%s удалена"
+
+#: task_router.py:120
+msgid "(Êâ¿Ê)â¯ alot of tasks added"
+msgstr "(Êâ¿Ê)â¯ добавлена кучка задач"
+
+#: task_router.py:131 task_router.py:139 task_router.py:174
+msgid "No date time provided Ù©(Í¡à¹Ì¯Í¡à¹)Û¶"
+msgstr "Напишите время и/или дату Ù©(Í¡à¹Ì¯Í¡à¹)Û¶"
+
+#: task_router.py:135 task_router.py:178 task_router.py:202
+msgid ""
+"Please send task number (i.e. #*33) to schedule. See current list tasks "
+"with ."
+msgstr ""
+"Пожалуйста, отправьте номер задачи (напр.*33) для напоминания. Посмотреть "
+"текущие задачи -  ."
+
+#: task_router.py:143
+msgid "Error convert date à² _à² "
+msgstr "Не могу понять дату à² _à² "
+
+#: task_router.py:149
+msgid "â° Task #%s scheduled to %s"
+msgstr "â° Задача №%s запланирована на %s"
+
+#: task_router.py:156
+msgid "Ù©(Í¡à¹Ì¯Í¡à¹)Û¶ Please provide task number to unschedule â°"
+msgstr "Ù©(Í¡à¹Ì¯Í¡à¹)Û¶ Напишите номер задачи, чтобы удалить напоминание â°"
+
+#: task_router.py:159
+msgid "â° can unschedule only task number à² _à² "
+msgstr "â° могу удалить напоминание только по номеру à² _à² "
+
+#: task_router.py:182
+msgid "No task provided Ù©(Í¡à¹Ì¯Í¡à¹)Û¶"
+msgstr "Напишите задачу Ù©(Í¡à¹Ì¯Í¡à¹)Û¶"
+
+#: task_router.py:187
+msgid "ðï¸ Task %s updated"
+msgstr "ðï¸ Задача %s обновлена"
+
+#: task_router.py:198 task_router.py:206
+msgid "No list name provided Ù©(Í¡à¹Ì¯Í¡à¹)Û¶"
+msgstr "Напишите имя списка Ù©(Í¡à¹Ì¯Í¡à¹)Û¶"
+
+#: task_router.py:211
+msgid "No task #%s found in active list"
+msgstr "Задача №%s не найдена в активном списке"
+
+#: task_router.py:215
+msgid "List %s not found"
+msgstr "Список %s не найден"
+
+#: task_router.py:219
+msgid "â¡ï¸ Task %s moved to list %s"
+msgstr "â¡ï¸ Задача %s отправлена в список %s"
+
+#: task_router.py:227
+msgid "Task %s added to list %s"
+msgstr "Задача `%s` добавлена в список `%s`"
+
+#: task_router.py:242
+msgid "Text something (â_â)"
+msgstr "Отправьте что-нибудь (â_â)"
+
+#: task_router.py:248
+msgid "Text number to edit task (â_â)"
+msgstr "Отправьте номер для редактирования задачи (â_â)"
+
+#: task_router.py:254
+msgid "Text number and list to move task (â_â)"
+msgstr "Напишите номер и список для перемещения задачи (â_â)"
+
+#: task_router.py:265
+msgid "Text number (â_â) to â° the task"
+msgstr "Напишите номер (â_â) чтобы â° задачу"
