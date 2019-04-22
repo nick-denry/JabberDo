@@ -6,6 +6,7 @@ import gettext
 from dateutil.parser import parse
 from sleekxmpp.stanza.message import Message
 
+from models.list_model import ListModel
 from components.config import Config
 from routers.base_router import BaseRouter
 
@@ -37,16 +38,13 @@ class TaskRouter(BaseRouter):
     def reply_message(self):
         return super().reply_message
 
-    def __set_task_complete_action(self, task_sequential_number):
-        the_list = self.__list_repository.get_active(self.current_jid)
-        if not the_list:
-            self.add_reply_message(
-                _("No active list found. See lists with .. or choose one by name .<list_name>"))
-            return None
-        if not task_sequential_number.isdigit():
-            self.add_reply_message(
-                _("Please send task number (i.e. !33) to set task 33 complete. See current list tasks with ."))
-            return None
+    def __is_list_contain_only_digits(self, some_list: list) -> bool:
+        for i in some_list:
+            if not i.isdigit():
+                return False
+        return True
+
+    def __set_single_task_complete(self, the_list: ListModel, task_sequential_number: int):
         task_number = int(task_sequential_number) - 1
         task = self.__task_repository.get_task_from_list_number(the_list, task_number_in_list=task_number)
         if not task:
@@ -55,6 +53,39 @@ class TaskRouter(BaseRouter):
             return None
         self.__task_repository.set_task_complete(task)
         self.add_reply_message(_("Set task #%s complete") % task_sequential_number)
+
+    def __set_multiple_tasks_complete(self, the_list: ListModel, task_sequential_numbers_list: list):
+        print(task_sequential_numbers_list.split(" "))
+        try:
+            numbers_list = task_sequential_numbers_list.split(" ")
+            print(numbers_list)
+        except ValueError:
+            self.add_reply_message(
+                _("Please send task number or space-separated numbers (i.e. !33) to set task 33 complete."
+                  " See current list tasks with ."))
+            return None
+        if not self.__is_list_contain_only_digits(numbers_list):
+            self.add_reply_message(
+                _("Please send numbers like !3 5 7 if you want to set multiple tasks complete."))
+            return None
+        # Reverse sort task numbers to complete tasks from the bottom of the list
+        task_sequential_numbers_list_sorted = sorted(numbers_list, reverse=True)
+        for task_sequential_number in task_sequential_numbers_list_sorted:
+            self.__set_single_task_complete(the_list, task_sequential_number)
+
+    def __set_task_complete_action(self, message):
+        the_list = self.__list_repository.get_active(self.current_jid)
+        if not the_list:
+            self.add_reply_message(
+                _("No active list found. See lists with .. or choose one by name .<list_name>"))
+            return None
+        if not message:
+            self.add_reply_message(_("Text number(s) to comlete task(s) (◔_◔)"))
+            return None
+        if message.isdigit():
+            self.__set_single_task_complete(the_list, message)
+        else:
+            self.__set_multiple_tasks_complete(the_list, message)
 
     def __remove_task_action(self, task_sequential_number):
         """
@@ -199,7 +230,7 @@ class TaskRouter(BaseRouter):
         command = self.extract_command(message)
         if command == "!":
             message = self.extract_command_message(command, message)
-            self.__set_task_complete_action(task_sequential_number=message)
+            self.__set_task_complete_action(message)
         elif command == "-":
             message = self.extract_command_message(command, message)
             self.__remove_task_action(task_sequential_number=message)
