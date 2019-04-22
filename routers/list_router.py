@@ -7,6 +7,7 @@ import json
 
 from sleekxmpp.stanza.message import Message
 
+from models.list_model import ListModel
 from components.config import Config
 from routers.base_router import BaseRouter
 
@@ -99,6 +100,26 @@ class ListRouter(BaseRouter):
         else:
             self.add_reply_message(_("List %s not found") % list_name)
 
+    def __process_list_action(self, list_name: str):
+        # Check if list exits
+        is_list_exists = self.__list_repository.is_list_exists(list_name)
+        # If not add
+        if not is_list_exists:
+            self.__list_repository.add_list(list_name)
+            self.add_reply_message(_("Added list %s") % list_name)
+        # Set active for current user & display
+        self.__list_repository.set_active(list_name, self.current_jid)
+        self.__display_active_list_action()
+
+    def __clear_list_completed_taks_action(self, the_list: ListModel):
+        self.__list_repository.remove_list_completed_tasks(the_list)
+        self.add_reply_message(_("Clear completed tasks of the %s list") % the_list.name)
+
+    def __display_completed_task_action(self, the_list: ListModel):
+        self.add_reply_message(_("Completed tasks of the %s list:") % the_list.name)
+        no_tasks_messsage = _("No completed tasks for this list. Complete one with !<number>.")
+        self.__display_list_tasks_action(the_list, no_tasks_messsage, "completed_tasks")
+
     def route(self, message: str):
         if message:
             command = self.extract_command(message)
@@ -117,25 +138,18 @@ class ListRouter(BaseRouter):
                 message = self.extract_command_message(command, message)
                 command = self.extract_command(message)
                 the_list = self.__list_repository.get_active(self.current_jid)
+                if not the_list:
+                    self.add_reply_message(
+                        _("No active list found. See lists with .. or choose one by name .<list_name>"))
+                    return None
                 # Clear completed tasks
                 if command == "-":
-                    self.__list_repository.remove_list_completed_tasks(the_list)
-                    self.add_reply_message(_("Clear completed tasks of the %s list") % the_list.name)
+                    self.__clear_list_completed_taks_action(the_list)
                 # Display completed tasks
                 else:
-                    self.add_reply_message(_("Completed tasks of the %s list:") % the_list.name)
-                    no_tasks_messsage = _("No completed tasks for this list. Complete one with !<number>.")
-                    self.__display_list_tasks_action(the_list, no_tasks_messsage, "completed_tasks")
+                    self.__display_completed_task_action(the_list)
             else:
-                # Check if list exits
-                is_list_exists = self.__list_repository.is_list_exists(message)
-                # If not add
-                if not is_list_exists:
-                    self.__list_repository.add_list(message)
-                    self.add_reply_message(_("Added list %s") % message)
-                # Set active for current user & display
-                self.__list_repository.set_active(message, self.current_jid)
-                self.__display_active_list_action()
+                self.__process_list_action(message)
         else:
             # Display active list
             self.__display_active_list_action()
