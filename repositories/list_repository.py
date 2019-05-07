@@ -53,7 +53,8 @@ class RedisListRepository(BaseRedisRepository):
         return the_list
 
     def get_all_lists_names(self):
-        return self.redis_connection.zrange("lists:names", 0, -1)
+        list_names_raw = self.redis_connection.zrange("lists:names", 0, -1)
+        return sorted(list_names_raw)
 
     def add_list(self, list_name):
         """
