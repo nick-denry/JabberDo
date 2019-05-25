@@ -56,7 +56,8 @@ class TaskRouter(BaseRouter):
     def __set_multiple_tasks_complete(self, the_list: ListModel, task_sequential_numbers_list: list):
         print(task_sequential_numbers_list.split(" "))
         try:
-            numbers_list = task_sequential_numbers_list.split(" ")
+            numbers_list_raw = task_sequential_numbers_list.split(" ")
+            numbers_list = list(map(int, numbers_list_raw))
             print(numbers_list)
         except ValueError:
             self.add_reply_message(
