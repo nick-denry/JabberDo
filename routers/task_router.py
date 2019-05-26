@@ -57,16 +57,15 @@ class TaskRouter(BaseRouter):
         print(task_sequential_numbers_list.split(" "))
         try:
             numbers_list_raw = task_sequential_numbers_list.split(" ")
+            if not self.__is_list_contain_only_digits(numbers_list_raw):
+                self.add_reply_message(
+                    _(u"Please send numbers like !3 5 7 if you want to set multiple tasks complete."))
+                return None
             numbers_list = list(map(int, numbers_list_raw))
-            print(numbers_list)
         except ValueError:
             self.add_reply_message(
                 _(u"Please send task number or space-separated numbers (i.e. !33) to set task 33 complete."
                   u" See current list tasks with ."))
-            return None
-        if not self.__is_list_contain_only_digits(numbers_list):
-            self.add_reply_message(
-                _(u"Please send numbers like !3 5 7 if you want to set multiple tasks complete."))
             return None
         # Reverse sort task numbers to complete tasks from the bottom of the list
         task_sequential_numbers_list_sorted = sorted(numbers_list, reverse=True)
