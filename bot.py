@@ -50,8 +50,8 @@ if __name__ == '__main__':
                         format='%(levelname)-8s %(message)s')
 
     xmpp = TasksBot(Config.jid+"/bot", Config.password)
-    if Config.protocol_sslv23:
-        xmpp.ssl_version = ssl.PROTOCOL_SSLv23
+    if Config.protocol:
+        xmpp.ssl_version = getattr(ssl, Config.protocol)
     xmpp.auto_authorize = True  # TODO: Redo with custom subscription control?
     xmpp.auto_subscribe = True
     xmpp.registerPlugin('xep_0030')  # Service Discovery

@@ -2,7 +2,7 @@ bot_account:
   jid: bot_jid@example.com
   password: bot_password
   port: 5222
-  PROTOCOL_SSLv23: True
+  protocol: PROTOCOL_TLSv1_2 # available options PROTOCOL_SSLv23, PROTOCOL_SSLv2, PROTOCOL_SSLv3, PROTOCOL_TLSv1_1, PROTOCOL_TLSv1_2, PROTOCOL_TLS
 
 db:
   type: redis

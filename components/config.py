@@ -13,7 +13,7 @@ class Config:
     jid = config["bot_account"]["jid"]
     password = config["bot_account"]["password"]
     port = config["bot_account"]["port"]
-    protocol_sslv23 = bool(config["bot_account"]["PROTOCOL_SSLv23"])
+    protocol = config["bot_account"]["protocol"]
 
     db_type = config["db"]["type"]
 
