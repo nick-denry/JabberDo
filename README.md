@@ -57,7 +57,7 @@ Just text `?`
     sudo apt-get install python3-pip  # Install python3-pip
     sudo pip3 install virtualenv  # Install virtualenv 
     virtualenv -p python3 myenv  # Create virtualenv
-    source myenv  # Activate created env
+    source myenv/bin/activate  # Activate created env
     # Add packages
     pip3 install sleekxmpp
     pip3 install redis
