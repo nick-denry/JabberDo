@@ -67,9 +67,9 @@ Just text `?`
     
  
 
-2. [Download bot files](https://github.com/nick-denry/PyXmmpDo/archive/master.zip) or clone form github:
+2. [Download bot files](https://github.com/nick-denry/JabberDo/archive/master.zip) or clone form github:
 ```bash
-git clone https://github.com/nick-denry/PyXmmpDo.git 
+git clone https://github.com/nick-denry/JabberDo.git
 ```
 
 2. Copy `main-local.dist.yml` to `main-local.yml` at `config` folder.
